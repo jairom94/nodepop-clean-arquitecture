@@ -3,4 +3,5 @@ export interface ITokenService {
     sub: string;
     email: string;
   }): string;
+  getExpiry(token: string): Date | null;
 }

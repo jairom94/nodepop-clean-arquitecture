@@ -36,3 +36,10 @@ model Product {
   ownerId Int
   tags    Tag[]
 }
+
+model RevokedToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
