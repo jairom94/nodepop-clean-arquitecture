@@ -1,7 +1,8 @@
-import { PasswordHasher } from "../../features/users/domain/PasswordHasher.js";
-import bcrypt from "bcrypt";
 
-export class BcryptPasswordHasher implements PasswordHasher {
+import bcrypt from "bcrypt";
+import { IPasswordHasher } from "../../features/users/domain/PasswordHasher.js";
+
+export class BcryptPasswordHasher implements IPasswordHasher {
   async hash(password: string): Promise<string> {
     return bcrypt.hash(password, 7);
   }
