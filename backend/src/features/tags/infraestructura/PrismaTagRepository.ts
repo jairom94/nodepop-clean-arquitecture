@@ -1,4 +1,4 @@
-import { databaseClient, PrismaDatabaseClient } from "../../../database/prisma/PrismaDatabseClient.js";
+import { databaseClient, PrismaDatabaseClient } from "../../../database/prisma/PrismaDatabaseClient.js";
 import { Tag } from "../domain/Tag.js";
 import { ITagRepository } from "../domain/tagRepository.js";
 import { PrismaTagMapper } from "./PrismaTagMapper.js";
