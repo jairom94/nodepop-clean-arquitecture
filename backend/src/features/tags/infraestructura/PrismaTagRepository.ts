@@ -13,13 +13,12 @@ export class PrismaTagRepository implements ITagRepository {
         return PrismaTagMapper.toDomain(created);
     }
     async findAll(): Promise<Tag[]> {
-        // const tags = await databaseClient.client.tag.findMany();
-        // return tags.map(tag=>new Tag({id:tag.id,name:tag.name}));
-        return [];
+        const tags = await databaseClient.db.tag.findMany();
+        return tags.map(tag=>PrismaTagMapper.toDomain(tag));        
     }
     async findById(id: number): Promise<Tag | null> {
         const found = await databaseClient.db.tag.findUnique({where:{id}});
         if(!found) return null;
-        return new Tag({id:found.id,name:found.name});
+        return PrismaTagMapper.toDomain(found);
     }
 }

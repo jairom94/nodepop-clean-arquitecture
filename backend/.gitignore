@@ -69,3 +69,9 @@ tsconfig.tsbuildinfo
 *.tar.gz
 *.zip
 *.rar
+
+# Base de datos
+*.sqlite
+*.db
+*.db-journal
+

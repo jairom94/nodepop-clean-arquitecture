@@ -16,3 +16,11 @@ model Tag {
   id Int @id @default(autoincrement())
   name String @unique
 }
+
+model User {
+  id        Int    @id @default(autoincrement())
+  name      String
+  lastname1 String
+  email     String @unique
+  password  String
+}
