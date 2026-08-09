@@ -24,9 +24,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
-  if (err instanceof AppError) {
-    // if (req.url.startsWith("/api")) {
-    // }
+  if (err instanceof AppError) {    
     return res.status(err.status).json({
       code: err.code,
       message: err.message,
