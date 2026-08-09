@@ -25,9 +25,14 @@ export class LoginHandler {
     const token = this.tokenService.sign({
       sub: String(user.id),
       email: user.email,
-    });
+    }, "access");
+    const refreshToken = this.tokenService.sign({
+      sub: String(user.id),
+      email: user.email,
+    }, "refresh");
     return {
       token,
+      refreshToken,
       user: {
         id: user.id,
         name: user.name,

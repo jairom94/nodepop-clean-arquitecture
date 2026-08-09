@@ -5,6 +5,7 @@ export interface LoginCommand {
 
 export interface LoginResult {
   token: string;
+  refreshToken: string;
   user: {
     id: number | null;
     name: string;
