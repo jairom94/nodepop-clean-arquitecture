@@ -1,7 +1,8 @@
 import { Tag } from "../domain/Tag.js";
+import { Tag as PrismaTag } from "../../../generated/prisma/client.js";
 
 export class PrismaTagMapper {
-  static toDomain(model: Tag): Tag {
+  static toDomain(model: PrismaTag): Tag {
     return new Tag({
       id: model.id,
       name: model.name,
