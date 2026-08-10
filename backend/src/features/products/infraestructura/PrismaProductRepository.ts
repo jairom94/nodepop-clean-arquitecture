@@ -33,4 +33,28 @@ export class PrismaProductRepository implements IProductRepository {
         });
         return products.map(product=>PrismaProductMapper.toDomain(product));
     }
+    async update(id: number, data: {name:string;price:number;image:string|null;tags:string[]}): Promise<Product> {
+        const updated = await databaseClient.db.product.update({
+            where:{id},
+            data:{
+                name: data.name,
+                price: data.price,
+                image: data.image,
+                tags: {
+                    set: [],
+                    connectOrCreate: data.tags.map((name) => ({
+                        where: { name },
+                        create: { name },
+                    })),
+                },
+            },
+            include:{ tags:true }
+        });
+        return PrismaProductMapper.toDomain(updated);
+    }
+    async delete(id: number): Promise<void> {
+        await databaseClient.db.product.delete({
+            where:{ id },
+        });
+    }
 }

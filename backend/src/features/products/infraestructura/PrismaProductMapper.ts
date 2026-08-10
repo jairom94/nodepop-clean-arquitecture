@@ -31,4 +31,15 @@ export class PrismaProductMapper {
       },
     };
   }
+
+  static toResponse(product: Product) {
+    return {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      ownerId: product.ownerId,
+      image: product.image,
+      tags: product.tags.map((tag) => ({ id: tag.id, name: tag.name })),
+    };
+  }
 }
