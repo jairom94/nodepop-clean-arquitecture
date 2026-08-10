@@ -25,4 +25,11 @@ export class PrismaUserRepository implements IUserRepository {
         if(!found) return null;
         return PrismaUserMapper.toDomain(found);
     }
+    async update(id: number, data: {name:string;lastname1:string;email:string}): Promise<User> {
+        const updated = await databaseClient.db.user.update({
+            where:{id},
+            data,
+        });
+        return PrismaUserMapper.toDomain(updated);
+    }
 }
