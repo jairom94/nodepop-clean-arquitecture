@@ -20,4 +20,13 @@ export class PrismaUserMapper {
       password: user.password,
     };
   }
+
+  static toResponse(user: User) {
+    return {
+      id: user.id,
+      name: user.name,
+      lastname1: user.lastname1,
+      email: user.email,
+    };
+  }
 }

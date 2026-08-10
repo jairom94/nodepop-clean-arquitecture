@@ -7,8 +7,7 @@ export function validateBody(schema: z.ZodType) {
     req: Request,
     _res: Response,
     next: NextFunction,
-  ): void => {
-    console.log("Validating request body:", req.body);
+  ): void => {    
     const result = schema.safeParse(req.body ?? {});
 
     if (!result.success) {
