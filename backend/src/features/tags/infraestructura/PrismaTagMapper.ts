@@ -14,4 +14,11 @@ export class PrismaTagMapper {
       name: tag.name,
     };
   }
+
+  static toResponse(tag: Tag) {
+    return {
+      id: tag.id,
+      name: tag.name,
+    };
+  }
 }

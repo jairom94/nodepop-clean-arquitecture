@@ -7,6 +7,9 @@ import { createUpdateUserRouter } from "../../features/users/update/updateUserRo
 import { createProductRouter } from "../../features/products/create/createProductRoute.js";
 import { createUpdateProductRouter } from "../../features/products/update/updateProductRoute.js";
 import { createDeleteProductRouter } from "../../features/products/delete/deleteProductRoute.js";
+import { createTagRouter } from "../../features/tags/create/createTagRoute.js";
+import { createUpdateTagRouter } from "../../features/tags/update/updateTagRoute.js";
+import { createDeleteTagRouter } from "../../features/tags/delete/deleteTagRoute.js";
 
 const router = Router();
 
@@ -19,5 +22,8 @@ router.use('/users',createUpdateUserRouter());
 router.use('/products',createProductRouter());
 router.use('/products',createUpdateProductRouter());
 router.use('/products',createDeleteProductRouter());
+router.use('/tags',createTagRouter());
+router.use('/tags',createUpdateTagRouter());
+router.use('/tags',createDeleteTagRouter());
 
 export default router;

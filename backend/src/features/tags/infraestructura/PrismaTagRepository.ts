@@ -1,4 +1,4 @@
-import { databaseClient, PrismaDatabaseClient } from "../../../database/prisma/PrismaDatabaseClient.js";
+import { databaseClient } from "../../../database/prisma/PrismaDatabaseClient.js";
 import { Tag } from "../domain/Tag.js";
 import { ITagRepository } from "../domain/tagRepository.js";
 import { PrismaTagMapper } from "./PrismaTagMapper.js";
@@ -20,5 +20,22 @@ export class PrismaTagRepository implements ITagRepository {
         const found = await databaseClient.db.tag.findUnique({where:{id}});
         if(!found) return null;
         return PrismaTagMapper.toDomain(found);
+    }
+    async findByName(name: string): Promise<Tag | null> {
+        const found = await databaseClient.db.tag.findUnique({where:{name}});
+        if(!found) return null;
+        return PrismaTagMapper.toDomain(found);
+    }
+    async update(id: number, data: {name:string}): Promise<Tag> {
+        const updated = await databaseClient.db.tag.update({
+            where:{ id },
+            data,
+        });
+        return PrismaTagMapper.toDomain(updated);
+    }
+    async delete(id: number): Promise<void> {
+        await databaseClient.db.tag.delete({
+            where:{ id },
+        });
     }
 }
