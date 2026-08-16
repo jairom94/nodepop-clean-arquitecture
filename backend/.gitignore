@@ -77,3 +77,6 @@ tsconfig.tsbuildinfo
 
 //Sesiones agente
 session-ses_01c2.md
+
+//Api client
+.bru/
