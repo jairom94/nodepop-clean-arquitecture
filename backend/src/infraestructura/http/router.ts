@@ -11,14 +11,21 @@ import { createDeleteProductRouter } from "../../features/products/delete/delete
 import { createTagRouter } from "../../features/tags/create/createTagRoute.js";
 import { createUpdateTagRouter } from "../../features/tags/update/updateTagRoute.js";
 import { createDeleteTagRouter } from "../../features/tags/delete/deleteTagRoute.js";
+import { authGuard } from "./middleware/AuthGuard.js";
+import { JwtTokenService } from "../security/JwtTokenService.js";
 
 const router = Router();
 
 
+// Rutas publicas
 router.use('/auth/login',createLoginRouter());
-router.use('/auth/logout',createLogoutRouter());
 router.use('/auth/refresh',createRefreshTokenRouter());
 router.use('/users',createUserRouter());
+
+// Rutas protegidas
+router.use(authGuard(new JwtTokenService()));
+
+router.use('/auth/logout',createLogoutRouter());
 router.use('/users',createUpdateUserRouter());
 router.use('/products',createProductRouter());
 router.use('/products',createGetProductRouter());
