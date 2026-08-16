@@ -5,6 +5,7 @@ import { createRefreshTokenRouter } from "../../features/auth/refresh/refreshTok
 import { createUserRouter } from "../../features/users/create/createUserRoute.js";
 import { createUpdateUserRouter } from "../../features/users/update/updateUserRoute.js";
 import { createProductRouter } from "../../features/products/create/createProductRoute.js";
+import { createListProductRouter } from "../../features/products/list/listProductRoute.js";
 import { createGetProductRouter } from "../../features/products/get/getProductRoute.js";
 import { createUpdateProductRouter } from "../../features/products/update/updateProductRoute.js";
 import { createDeleteProductRouter } from "../../features/products/delete/deleteProductRoute.js";
@@ -29,6 +30,7 @@ router.use(authGuard(new JwtTokenService(), new PrismaTokenRepository()));
 router.use('/auth/logout',createLogoutRouter());
 router.use('/users',createUpdateUserRouter());
 router.use('/products',createProductRouter());
+router.use('/products',createListProductRouter());
 router.use('/products',createGetProductRouter());
 router.use('/products',createUpdateProductRouter());
 router.use('/products',createDeleteProductRouter());

@@ -26,12 +26,20 @@ export class PrismaProductRepository implements IProductRepository {
         if(!found) return null;
         return PrismaProductMapper.toDomain(found);
     }
-    async findByOwnerId(ownerId: number): Promise<Product[]> {
+    async findByOwnerId(ownerId: number, skip?: number, take?: number): Promise<Product[]> {
         const products = await databaseClient.db.product.findMany({
             where:{ ownerId },
+            skip,
+            take,
+            orderBy:{ id: "asc" },
             include:{ tags:true }
         });
         return products.map(product=>PrismaProductMapper.toDomain(product));
+    }
+    async countByOwnerId(ownerId: number): Promise<number> {
+        return databaseClient.db.product.count({
+            where:{ ownerId },
+        });
     }
     async update(id: number, data: {name:string;price:number;image:string|null;tags:string[]}): Promise<Product> {
         const updated = await databaseClient.db.product.update({
