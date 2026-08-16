@@ -1,3 +1,31 @@
+/**
+ * @swagger
+ * /products:
+ *   post:
+ *     tags: [Products]
+ *     summary: Crea un nuevo producto
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateProductRequest'
+ *     responses:
+ *       201:
+ *         description: Producto creado correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       401:
+ *         description: No autenticado o error de validación de datos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiError'
+ */
 import { Router } from "express";
 import { CreateProductController } from "./createProductController.js";
 import { PrismaProductRepository } from "../infraestructura/PrismaProductRepository.js";

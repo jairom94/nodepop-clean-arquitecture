@@ -3,6 +3,7 @@ import logger from "morgan";
 import { ErrorCodes } from "./shared/errors/error-codes.js";
 import { AppError } from "./shared/errors/AppError.js";
 import apiRouter from "./infraestructura/http/router.js";
+import { createSwaggerRouter } from "./infraestructura/http/swagger.js";
 
 const app = express();
 
@@ -21,6 +22,9 @@ app.get("/", (req, res) => {
 });
 
 app.use(apiVersion,apiRouter);
+
+// Documentación de la API
+app.use('/api-doc', createSwaggerRouter());
 
 //404
 app.use((req: Request, res: Response, next: NextFunction) => {

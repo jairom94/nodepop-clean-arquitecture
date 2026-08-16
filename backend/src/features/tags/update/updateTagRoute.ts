@@ -1,3 +1,50 @@
+/**
+ * @swagger
+ * /tags/{id}:
+ *   patch:
+ *     tags: [Tags]
+ *     summary: Actualiza el nombre de un tag
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del tag
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateTagRequest'
+ *     responses:
+ *       200:
+ *         description: Tag actualizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Tag'
+ *       401:
+ *         description: No autenticado o error de validación de datos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiError'
+ *       404:
+ *         description: Tag no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiError'
+ *       409:
+ *         description: Ya existe un tag con ese nombre
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiError'
+ */
 import { Router } from "express";
 import { UpdateTagController } from "./updateTagController.js";
 import { PrismaTagRepository } from "../infraestructura/PrismaTagRepository.js";

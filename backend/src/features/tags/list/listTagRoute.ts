@@ -1,3 +1,27 @@
+/**
+ * @swagger
+ * /tags:
+ *   get:
+ *     tags: [Tags]
+ *     summary: Lista todos los tags
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Listado completo de tags
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Tag'
+ *       401:
+ *         description: No autenticado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiError'
+ */
 import { Router } from "express";
 import { ListTagController } from "./listTagController.js";
 import { PrismaTagRepository } from "../infraestructura/PrismaTagRepository.js";
