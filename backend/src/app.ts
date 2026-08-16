@@ -4,6 +4,7 @@ import { ErrorCodes } from "./shared/errors/error-codes.js";
 import { AppError } from "./shared/errors/AppError.js";
 import apiRouter from "./infraestructura/http/router.js";
 import { createSwaggerRouter } from "./infraestructura/http/swagger.js";
+import { ENVIRONMENTS } from "./config/environments.js";
 
 const app = express();
 
@@ -40,7 +41,7 @@ app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
       code: err.code,
       message: err.message,
       cause: err.cause,
-      stack: err.stack,
+      stack: ENVIRONMENTS.mode === "development" ? err.stack : undefined,
     });
   }
 
@@ -48,7 +49,7 @@ app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
   return res.status(500).json({
     code: ErrorCodes.INTERNAL_ERROR,
     message: "Internal server error",
-    stack: error.stack,
+    stack: ENVIRONMENTS.mode === "development" ? error.stack : undefined,
   });
 });
 
