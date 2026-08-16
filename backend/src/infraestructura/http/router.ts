@@ -13,6 +13,7 @@ import { createUpdateTagRouter } from "../../features/tags/update/updateTagRoute
 import { createDeleteTagRouter } from "../../features/tags/delete/deleteTagRoute.js";
 import { authGuard } from "./middleware/AuthGuard.js";
 import { JwtTokenService } from "../security/JwtTokenService.js";
+import { PrismaTokenRepository } from "../../features/auth/infraestructura/PrismaTokenRepository.js";
 
 const router = Router();
 
@@ -23,7 +24,7 @@ router.use('/auth/refresh',createRefreshTokenRouter());
 router.use('/users',createUserRouter());
 
 // Rutas protegidas
-router.use(authGuard(new JwtTokenService()));
+router.use(authGuard(new JwtTokenService(), new PrismaTokenRepository()));
 
 router.use('/auth/logout',createLogoutRouter());
 router.use('/users',createUpdateUserRouter());
