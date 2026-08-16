@@ -10,6 +10,7 @@ import { createGetProductRouter } from "../../features/products/get/getProductRo
 import { createUpdateProductRouter } from "../../features/products/update/updateProductRoute.js";
 import { createDeleteProductRouter } from "../../features/products/delete/deleteProductRoute.js";
 import { createTagRouter } from "../../features/tags/create/createTagRoute.js";
+import { createListTagRouter } from "../../features/tags/list/listTagRoute.js";
 import { createUpdateTagRouter } from "../../features/tags/update/updateTagRoute.js";
 import { createDeleteTagRouter } from "../../features/tags/delete/deleteTagRoute.js";
 import { authGuard } from "./middleware/AuthGuard.js";
@@ -35,6 +36,7 @@ router.use('/products',createGetProductRouter());
 router.use('/products',createUpdateProductRouter());
 router.use('/products',createDeleteProductRouter());
 router.use('/tags',createTagRouter());
+router.use('/tags',createListTagRouter());
 router.use('/tags',createUpdateTagRouter());
 router.use('/tags',createDeleteTagRouter());
 
