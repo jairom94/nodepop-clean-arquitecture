@@ -1,0 +1,16 @@
+services:
+  app:
+    container_name: nodepop-backend
+    image: nodepop-backend:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3005:3005"
+    volumes:
+      - .:/usr/src/app 
+      - /usr/src/app/node_modules                 
+    command: pnpm run dev
+    restart: always
+    env_file:
+      - .env

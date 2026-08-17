@@ -1,0 +1,27 @@
+FROM node:24-bookworm-slim
+
+WORKDIR /usr/src/app
+
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+ 
+RUN npm install -g pnpm
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
+RUN pnpm install --frozen-lockfile
+
+COPY . .
+
+ENV CI=true
+
+EXPOSE 3005
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD curl -f http://localhost:3005/health || exit 1
+
+CMD ["pnpm", "dev"]
+

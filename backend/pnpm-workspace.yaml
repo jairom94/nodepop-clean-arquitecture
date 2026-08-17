@@ -1,4 +1,16 @@
+# allowBuilds:
+#   '@prisma/engines': set this to true or false
+#   '@scarf/scarf': set this to true or false
+#   bcrypt: true
+#   better-sqlite3: true
+#   esbuild: set this to true or false
+#   prisma: true
 allowBuilds:
+  '@prisma/engines': true
+  '@scarf/scarf': false
   bcrypt: true
   better-sqlite3: true
+  esbuild: true
   prisma: true
+
+

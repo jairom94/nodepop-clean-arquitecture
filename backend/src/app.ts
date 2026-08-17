@@ -22,6 +22,10 @@ app.get("/", (req, res) => {
   res.send("Servidor funcionando correctamente.");
 });
 
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 app.use(apiVersion,apiRouter);
 
 // Documentación de la API
