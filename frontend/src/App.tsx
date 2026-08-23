@@ -3,7 +3,6 @@ import AppLayout from "./components/AppLayout";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import ProductsPage from "./pages/ProductsPage";
 import MyProductsPage from "./pages/MyProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import TagsPage from "./pages/TagsPage";
@@ -22,9 +21,8 @@ function App() {
         {/* Resto de páginas dentro del layout compartido */}
         <Route element={<AppLayout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/products" element={<ProductsPage />} />
           <Route element={<AuthRedirect />}>
-            <Route path="/products/mine" element={<MyProductsPage />} />
+            <Route path="/products" element={<MyProductsPage />} />
           </Route>
           <Route path="/products/:id" element={<ProductDetailPage />} />
           <Route path="/tags" element={<TagsPage />} />

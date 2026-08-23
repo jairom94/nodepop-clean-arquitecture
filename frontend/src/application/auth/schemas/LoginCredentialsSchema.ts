@@ -8,7 +8,7 @@ export const LoginCredentialsSchema = z.object({
   password: z
     .string({ error: "La contraseña es obligatoria" })
     .min(1, "La contraseña es obligatoria")
-    .min(8, "Debe tener al menos 8 caracteres"),
+    .min(6, "Debe tener al menos 6 caracteres"),
 });
 
 export type LoginCredentials =
