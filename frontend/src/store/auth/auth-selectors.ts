@@ -19,6 +19,7 @@ export const useAuthActions = () =>
   useAppStore(
     useShallow((state: AppStore) => ({
       setSession: state.setSession,
+      updateUser: state.updateUser,
       clearSession: state.clearSession,
     })),
   );

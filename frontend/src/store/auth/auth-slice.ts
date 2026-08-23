@@ -7,6 +7,7 @@ export interface AuthSlice {
   token: string | null;
   user: SessionUser | null;
   setSession: (session: LoginResponseDto) => void;
+  updateUser: (user: SessionUser) => void;
   clearSession: () => void;
 }
 
@@ -14,5 +15,6 @@ export const createAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (set)
   token: null,
   user: null,
   setSession: ({ token, user }) => set({ token, user }),
+  updateUser: (user) => set({ user }),
   clearSession: () => set({ token: null, user: null }),
 });

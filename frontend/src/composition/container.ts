@@ -1,6 +1,7 @@
 import { LoginService } from "@/application/auth/LoginService";
 import { LogoutService } from "@/application/auth/LogoutService";
 import { RegisterService } from "@/application/auth/RegisterService";
+import { UpdateUserService } from "@/application/auth/UpdateUserService";
 import {
   CreateProductService,
 } from "@/application/products/CreateProductService";
@@ -22,6 +23,7 @@ export const httpClient = new AxiosHttpClient(axiosClient, tokenStorage);
 export const loginService = new LoginService(httpClient, tokenStorage);
 export const logoutService = new LogoutService(httpClient, tokenStorage);
 export const registerService = new RegisterService(httpClient);
+export const updateUserService = new UpdateUserService(httpClient);
 export const listProductsService = new ListProductsService(httpClient);
 export const getProductService = new GetProductService(httpClient);
 export const listMyProductsService = new ListMyProductsService(httpClient);

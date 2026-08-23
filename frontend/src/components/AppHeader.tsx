@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import { useIsAuthenticated, useAuthActions } from "@/store/auth/auth-selectors";
 import { useLogout } from "@/presentation/auth/hooks/useLogout";
 import { Button } from "@/components/ui/button";
@@ -57,18 +57,35 @@ export function AppHeader() {
           ))}
         </nav>
 
-        {/* Logout desktop */}
-        {isAuthenticated && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="ml-auto hidden sm:inline-flex"
-            onClick={() => void handleLogout()}
-            disabled={logout.isPending}
-          >
-            {logout.isPending ? "Saliendo..." : "Cerrar sesión"}
-          </Button>
-        )}
+        {/* Acciones desktop */}
+        <div className="ml-auto hidden items-center gap-1 sm:flex">
+          {isAuthenticated && (
+            <NavLink
+              to="/profile"
+              className={({ isActive }) =>
+                [
+                  "inline-flex size-8 items-center justify-center rounded-md transition-colors",
+                  isActive
+                    ? "bg-secondary text-secondary-foreground"
+                    : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground",
+                ].join(" ")
+              }
+              aria-label="Mi perfil"
+            >
+              <User className="size-4" />
+            </NavLink>
+          )}
+          {isAuthenticated && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => void handleLogout()}
+              disabled={logout.isPending}
+            >
+              {logout.isPending ? "Saliendo..." : "Cerrar sesión"}
+            </Button>
+          )}
+        </div>
 
         {/* Botón menú móvil */}
         <button
@@ -98,15 +115,24 @@ export function AppHeader() {
               </NavLink>
             ))}
             {isAuthenticated && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="mt-1 justify-start"
-                onClick={() => void handleLogout()}
-                disabled={logout.isPending}
-              >
-                {logout.isPending ? "Saliendo..." : "Cerrar sesión"}
-              </Button>
+              <>
+                <NavLink
+                  to="/profile"
+                  className={linkClass}
+                  onClick={() => setIsOpen(false)}
+                >
+                  Mi perfil
+                </NavLink>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="mt-1 justify-start"
+                  onClick={() => void handleLogout()}
+                  disabled={logout.isPending}
+                >
+                  {logout.isPending ? "Saliendo..." : "Cerrar sesión"}
+                </Button>
+              </>
             )}
           </div>
         </nav>
