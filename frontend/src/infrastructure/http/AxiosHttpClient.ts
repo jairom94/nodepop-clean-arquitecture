@@ -1,11 +1,20 @@
 import type { HttpClient } from "@/application/ports/HttpClient";
+import type { TokenStorage } from "@/application/ports/TokenStorage";
 import type { AxiosInstance } from "axios";
 
 export class AxiosHttpClient implements HttpClient {
   private readonly client: AxiosInstance;
 
-  constructor(client: AxiosInstance) {
+  constructor(client: AxiosInstance, tokenStorage: TokenStorage) {
     this.client = client;
+
+    this.client.interceptors.request.use((config) => {
+      const token = tokenStorage.getToken();
+      if (token) {
+        config.headers.set("Authorization", `Bearer ${token}`);
+      }
+      return config;
+    });
   }
 
   async get<T>(url: string): Promise<T> {
