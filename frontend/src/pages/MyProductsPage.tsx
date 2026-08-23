@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { useMyProducts } from "@/presentation/products/hooks/useMyProducts";
 import { useCreateProduct } from "@/presentation/products/hooks/useCreateProduct";
 import { useUpdateProduct } from "@/presentation/products/hooks/useUpdateProduct";
@@ -108,7 +109,14 @@ export default function MyProductsPage() {
             <li key={product.id}>
               <Card className="flex h-full flex-col">
                 <CardHeader>
-                  <CardTitle className="line-clamp-2">{product.name}</CardTitle>
+                  <CardTitle className="line-clamp-2">
+                    <Link
+                      to={`/products/${product.id}`}
+                      className="hover:underline"
+                    >
+                      {product.name}
+                    </Link>
+                  </CardTitle>
                   <CardDescription>{eur.format(product.price)}</CardDescription>
                 </CardHeader>
 

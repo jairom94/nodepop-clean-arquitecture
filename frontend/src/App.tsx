@@ -22,8 +22,8 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route element={<AuthRedirect />}>
             <Route path="/products" element={<MyProductsPage />} />
+            <Route path="/products/:id" element={<ProductDetailPage />} />
           </Route>
-          <Route path="/products/:id" element={<ProductDetailPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
