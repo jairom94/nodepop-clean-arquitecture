@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response, Router } from "express";
 import logger from "morgan";
+import cors from "cors";
 import { ErrorCodes } from "./shared/errors/error-codes.js";
 import { AppError } from "./shared/errors/AppError.js";
 import apiRouter from "./infraestructura/http/router.js";
@@ -7,6 +8,12 @@ import { createSwaggerRouter } from "./infraestructura/http/swagger.js";
 import { ENVIRONMENTS } from "./config/environments.js";
 
 const app = express();
+
+// CORS: permite peticiones desde el origen del frontend
+app.use(cors({
+  origin: ENVIRONMENTS.corsOrigin,
+  credentials: true,
+}));
 
 // Para JSON
 app.use(express.json());
