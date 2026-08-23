@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,6 +12,7 @@ import { useRegister } from "./hooks/useRegister";
 
 export function Register() {
   const navigate = useNavigate();
+  const [isSuccess, setIsSuccess] = useState(false);
   const {
     control,
     handleSubmit,
@@ -23,7 +25,8 @@ export function Register() {
   const onSubmit = async (values: RegisterCredentials) => {
     try {
       await register.mutateAsync(values);
-      navigate("/login", { replace: true });
+      setIsSuccess(true);
+      setTimeout(() => navigate("/login", { replace: true }), 2000);
     } catch (err) {
       const message =
         isAxiosError(err) && err.response?.status === 409
@@ -32,6 +35,27 @@ export function Register() {
       setError("root", { message });
     }
   };
+
+  if (isSuccess) {
+    return (
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle>Cuenta creada</CardTitle>
+          <CardDescription>
+            Tu cuenta se ha registrado correctamente. Redirigiéndote al login...
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button
+            className="w-full"
+            onClick={() => navigate("/login", { replace: true })}
+          >
+            Ir al login
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full max-w-sm">
