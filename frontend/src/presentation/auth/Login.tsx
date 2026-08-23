@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,12 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoginCredentialsSchema, type LoginCredentials } from "@/application/auth/schemas/LoginCredentialsSchema";
 
-
 export function Login() {
   const {
-    register,
+    control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<LoginCredentials>({ resolver: zodResolver(LoginCredentialsSchema) });
 
   const onSubmit = async (values: LoginCredentials) => {
@@ -27,28 +26,44 @@ export function Login() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="tu@email.com"
-              {...register("email")}
-            />
-            {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="password">Contraseña</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              {...register("password")}
-            />
-            {errors.password && (
-              <p className="text-sm text-destructive">{errors.password.message}</p>
+          <Controller
+            name="email"
+            control={control}
+            render={({ field, fieldState }) => (
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="tu@email.com"
+                  aria-invalid={!!fieldState.error}
+                  {...field}
+                />
+                {fieldState.error && (
+                  <p className="text-sm text-destructive">{fieldState.error.message}</p>
+                )}
+              </div>
             )}
-          </div>
+          />
+          <Controller
+            name="password"
+            control={control}
+            render={({ field, fieldState }) => (
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="password">Contraseña</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  aria-invalid={!!fieldState.error}
+                  {...field}
+                />
+                {fieldState.error && (
+                  <p className="text-sm text-destructive">{fieldState.error.message}</p>
+                )}
+              </div>
+            )}
+          />
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             Entrar
           </Button>
