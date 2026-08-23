@@ -7,10 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoginCredentialsSchema, type LoginCredentials } from "@/application/auth/schemas/LoginCredentialsSchema";
+import { useAuthActions } from "@/store/auth/auth-selectors";
 import { useLogin } from "./hooks/useLogin";
 
 export function Login() {
   const navigate = useNavigate();
+  const { setSession } = useAuthActions();
   const {
     control,
     handleSubmit,
@@ -22,7 +24,8 @@ export function Login() {
 
   const onSubmit = async (values: LoginCredentials) => {
     try {
-      await login.mutateAsync(values);
+      const session = await login.mutateAsync(values);
+      setSession(session);
       navigate("/", { replace: true });
     } catch (err) {
       const message =
