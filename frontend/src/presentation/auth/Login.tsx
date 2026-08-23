@@ -1,21 +1,36 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { isAxiosError } from "axios";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoginCredentialsSchema, type LoginCredentials } from "@/application/auth/schemas/LoginCredentialsSchema";
+import { useLogin } from "./hooks/useLogin";
 
 export function Login() {
+  const navigate = useNavigate();
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting },
+    setError,
+    formState: { errors },
   } = useForm<LoginCredentials>({ resolver: zodResolver(LoginCredentialsSchema) });
 
+  const login = useLogin();
+
   const onSubmit = async (values: LoginCredentials) => {
-    console.log(values);
+    try {
+      await login.mutateAsync(values);
+      navigate("/", { replace: true });
+    } catch (err) {
+      const message =
+        isAxiosError(err) && err.response?.status === 401
+          ? "Email o contraseña incorrectos"
+          : "Error al iniciar sesión. Inténtalo de nuevo";
+      setError("root", { message });
+    }
   };
 
   return (
@@ -26,6 +41,7 @@ export function Login() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
           <Controller
             name="email"
             control={control}
@@ -64,8 +80,8 @@ export function Login() {
               </div>
             )}
           />
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            Entrar
+          <Button type="submit" className="w-full" disabled={login.isPending}>
+            {login.isPending ? "Entrando..." : "Entrar"}
           </Button>
         </form>
         <p className="mt-4 text-center text-sm text-muted-foreground">

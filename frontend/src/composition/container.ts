@@ -5,4 +5,4 @@ import { LocalStorageTokenStorage } from "@/infrastructure/storage/LocalStorageT
 
 export const tokenStorage = new LocalStorageTokenStorage();
 export const httpClient = new AxiosHttpClient(axiosClient, tokenStorage);
-export const loginService = new LoginService(httpClient);
+export const loginService = new LoginService(httpClient, tokenStorage);
