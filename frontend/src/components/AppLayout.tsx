@@ -1,13 +1,30 @@
-import { NavLink, Outlet } from "react-router";
+import { NavLink, Outlet, useNavigate } from "react-router";
+import { useIsAuthenticated, useAuthActions } from "@/store/auth/auth-selectors";
+import { useLogout } from "@/presentation/auth/hooks/useLogout";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   { to: "/", label: "Inicio", end: true },
   { to: "/products", label: "Productos" },
   { to: "/tags", label: "Tags" },
-  { to: "/login", label: "Login" },
 ];
 
 export default function AppLayout() {
+  const navigate = useNavigate();
+  const isAuthenticated = useIsAuthenticated();
+  const { clearSession } = useAuthActions();
+  const logout = useLogout();
+
+  const items = isAuthenticated
+    ? navItems
+    : [...navItems, { to: "/login", label: "Login", end: false }];
+
+  const handleLogout = async () => {
+    await logout.mutateAsync();
+    clearSession();
+    navigate("/login", { replace: true });
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -16,7 +33,7 @@ export default function AppLayout() {
             Nodepop
           </NavLink>
           <nav className="flex items-center gap-1">
-            {navItems.map((item) => (
+            {items.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
@@ -34,6 +51,18 @@ export default function AppLayout() {
               </NavLink>
             ))}
           </nav>
+
+          {isAuthenticated && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ml-auto"
+              onClick={() => void handleLogout()}
+              disabled={logout.isPending}
+            >
+              {logout.isPending ? "Saliendo..." : "Cerrar sesión"}
+            </Button>
+          )}
         </div>
       </header>
 

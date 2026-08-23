@@ -26,4 +26,13 @@ export class AxiosHttpClient implements HttpClient {
     const response = await this.client.post<T>(url, body);
     return response.data;
   }
+
+  async patch<T, B>(url: string, body: B): Promise<T> {
+    const response = await this.client.patch<T>(url, body);
+    return response.data;
+  }
+
+  async delete(url: string): Promise<void> {
+    await this.client.delete(url);
+  }
 }

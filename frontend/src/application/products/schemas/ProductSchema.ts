@@ -34,3 +34,16 @@ export const CreateProductSchema = z.object({
 });
 
 export type CreateProductDto = z.infer<typeof CreateProductSchema>;
+
+export const UpdateProductSchema = z
+  .object({
+    name: z.string().min(1, "El nombre es obligatorio").max(100, "Máximo 100 caracteres").optional(),
+    price: z.number().positive("El precio debe ser positivo").optional(),
+    image: z.url("Debe ser una URL válida").nullable().optional(),
+    tags: z.array(z.string().min(1)).optional(),
+  })
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "Debes proporcionar al menos un campo",
+  });
+
+export type UpdateProductDto = z.infer<typeof UpdateProductSchema>;
