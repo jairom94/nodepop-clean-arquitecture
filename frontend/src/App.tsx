@@ -5,7 +5,6 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import MyProductsPage from "./pages/MyProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
-import TagsPage from "./pages/TagsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import { AuthRedirect } from "@/presentation/routing/AuthRedirect";
 import { ErrorBoundary } from "@/presentation/components/ErrorBoundary";
@@ -25,7 +24,6 @@ function App() {
             <Route path="/products" element={<MyProductsPage />} />
           </Route>
           <Route path="/products/:id" element={<ProductDetailPage />} />
-          <Route path="/tags" element={<TagsPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import type { ProductDto } from "@/application/products/schemas/ProductSchema";
+import { useTags } from "@/presentation/tags/hooks/useTags";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -59,11 +60,23 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
     register,
     handleSubmit,
     setError,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
     defaultValues: toFormValues(product),
   });
+
+  const tagsQuery = useTags();
+  const tagsValue = watch("tags") ?? "";
+
+  const appendTag = (name: string) => {
+    const current = parseTags(tagsValue);
+    if (current.includes(name)) return;
+    const next = [...current, name].join(", ");
+    setValue("tags", next, { shouldValidate: true });
+  };
 
   const submit = async (values: ProductFormValues) => {
     try {
@@ -119,6 +132,28 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
               <Label htmlFor="tags">Tags (separados por coma)</Label>
               <Input id="tags" placeholder="bikes, mountain" {...register("tags")} />
               {errors.tags && <p className="text-sm text-destructive">{errors.tags.message}</p>}
+              {(tagsQuery.data ?? []).length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {(tagsQuery.data ?? []).map((tag) => {
+                    const selected = parseTags(tagsValue).includes(tag.name);
+                    return (
+                      <button
+                        key={tag.id ?? tag.name}
+                        type="button"
+                        onClick={() => appendTag(tag.name)}
+                        className={[
+                          "rounded-full px-2 py-0.5 text-xs transition-colors",
+                          selected
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+                        ].join(" ")}
+                      >
+                        {tag.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}

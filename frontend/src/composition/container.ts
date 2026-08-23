@@ -10,6 +10,9 @@ import { ListMyProductsService } from "@/application/products/ListMyProductsServ
 import { ListProductsService } from "@/application/products/ListProductsService";
 import { UpdateProductService } from "@/application/products/UpdateProductService";
 import { ListTagsService } from "@/application/tags/ListTagsService";
+import { CreateTagService } from "@/application/tags/CreateTagService";
+import { UpdateTagService } from "@/application/tags/UpdateTagService";
+import { DeleteTagService } from "@/application/tags/DeleteTagService";
 import { axiosClient } from "@/infrastructure/http/axiosClient";
 import { AxiosHttpClient } from "@/infrastructure/http/AxiosHttpClient";
 import { LocalStorageTokenStorage } from "@/infrastructure/storage/LocalStorageTokenStorage";
@@ -26,3 +29,6 @@ export const createProductService = new CreateProductService(httpClient, tokenSt
 export const updateProductService = new UpdateProductService(httpClient);
 export const deleteProductService = new DeleteProductService(httpClient);
 export const listTagsService = new ListTagsService(httpClient);
+export const createTagService = new CreateTagService(httpClient);
+export const updateTagService = new UpdateTagService(httpClient);
+export const deleteTagService = new DeleteTagService(httpClient);

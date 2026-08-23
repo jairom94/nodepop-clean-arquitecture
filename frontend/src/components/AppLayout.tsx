@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 const navItems = [
   { to: "/", label: "Inicio", end: true },
   { to: "/products", label: "Productos" },
-  { to: "/tags", label: "Tags" },
 ];
 
 export default function AppLayout() {

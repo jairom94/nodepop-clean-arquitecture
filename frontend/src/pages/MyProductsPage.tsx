@@ -4,6 +4,7 @@ import { useCreateProduct } from "@/presentation/products/hooks/useCreateProduct
 import { useUpdateProduct } from "@/presentation/products/hooks/useUpdateProduct";
 import { useDeleteProduct } from "@/presentation/products/hooks/useDeleteProduct";
 import { ProductFormDialog } from "@/presentation/products/components/ProductFormDialog";
+import { TagsManagerDialog } from "@/presentation/tags/components/TagsManagerDialog";
 import type { ProductDto } from "@/application/products/schemas/ProductSchema";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +17,7 @@ export default function MyProductsPage() {
     open: false,
     product: null,
   });
+  const [tagsOpen, setTagsOpen] = useState(false);
 
   const { data, isPending, isError, refetch } = useMyProducts({ page, pageSize: 10 });
   const createProduct = useCreateProduct();
@@ -77,9 +79,14 @@ export default function MyProductsPage() {
           <h1 className="text-2xl font-bold">Mis productos</h1>
           <span className="text-sm text-muted-foreground">{total} en total</span>
         </div>
-        <Button onClick={() => setDialog({ open: true, product: null })}>
-          Nuevo producto
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setTagsOpen(true)}>
+            Gestionar tags
+          </Button>
+          <Button onClick={() => setDialog({ open: true, product: null })}>
+            Nuevo producto
+          </Button>
+        </div>
       </div>
 
       {mutationFailed && (
@@ -176,6 +183,8 @@ export default function MyProductsPage() {
           }}
         />
       )}
+
+      {tagsOpen && <TagsManagerDialog onClose={() => setTagsOpen(false)} />}
     </section>
   );
 }
