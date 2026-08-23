@@ -71,11 +71,12 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
   const tagsQuery = useTags();
   const tagsValue = watch("tags") ?? "";
 
-  const appendTag = (name: string) => {
+  const toggleTag = (name: string) => {
     const current = parseTags(tagsValue);
-    if (current.includes(name)) return;
-    const next = [...current, name].join(", ");
-    setValue("tags", next, { shouldValidate: true });
+    const next = current.includes(name)
+      ? current.filter((t) => t !== name)
+      : [...current, name];
+    setValue("tags", next.join(", "), { shouldValidate: true });
   };
 
   const submit = async (values: ProductFormValues) => {
@@ -140,7 +141,7 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
                       <button
                         key={tag.id ?? tag.name}
                         type="button"
-                        onClick={() => appendTag(tag.name)}
+                        onClick={() => toggleTag(tag.name)}
                         className={[
                           "rounded-full px-2 py-0.5 text-xs transition-colors",
                           selected
