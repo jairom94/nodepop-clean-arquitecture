@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router";
 import {
   EMPTY_PRODUCTS_FILTER,
   ProductsFilter,
@@ -10,12 +9,12 @@ import { useCreateProduct } from "@/presentation/products/hooks/useCreateProduct
 import { useUpdateProduct } from "@/presentation/products/hooks/useUpdateProduct";
 import { useDeleteProduct } from "@/presentation/products/hooks/useDeleteProduct";
 import { ProductFormDialog } from "@/presentation/products/components/ProductFormDialog";
+import { ProductCard } from "@/presentation/products/components/ProductCard";
+import { ProductsEmptyState } from "@/presentation/products/components/ProductsEmptyState";
 import { TagsManagerDialog } from "@/presentation/tags/components/TagsManagerDialog";
 import type { ProductDto } from "@/application/products/schemas/ProductSchema";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-const eur = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
 const PAGE_SIZE = 10;
 
 function parseOptionalNumber(value: string): number | null {
@@ -143,63 +142,17 @@ export default function MyProductsPage() {
       )}
 
       {filteredItems.length === 0 ? (
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>No hay productos que mostrar</CardTitle>
-            <CardDescription>
-              {products?.length
-                ? "Prueba a ajustar los filtros de búsqueda"
-                : "Publica tu primer producto para empezar a vender"}
-            </CardDescription>
-          </CardHeader>
-        </Card>
+        <ProductsEmptyState hasProducts={(products?.length ?? 0) > 0} />
       ) : (
         <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {pageItems.map((product) => (
             <li key={product.id}>
-              <Card className="flex h-full flex-col">
-                <CardHeader>
-                  <CardTitle className="line-clamp-2">
-                    <Link to={`/products/${product.id}`} className="hover:underline">
-                      {product.name}
-                    </Link>
-                  </CardTitle>
-                  <CardDescription>{eur.format(product.price)}</CardDescription>
-                </CardHeader>
-
-                {product.tags.length > 0 && (
-                  <CardContent className="flex flex-wrap gap-1 pb-0">
-                    {product.tags.map((tag) => (
-                      <span
-                        key={tag.id ?? tag.name}
-                        className="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground"
-                      >
-                        {tag.name}
-                      </span>
-                    ))}
-                  </CardContent>
-                )}
-
-                <CardContent className="mt-auto flex gap-2 pt-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => setDialog({ open: true, product })}
-                  >
-                    Editar
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    className="flex-1"
-                    disabled={deleteProduct.isPending}
-                    onClick={() => void handleDelete(product.id as number)}
-                  >
-                    Eliminar
-                  </Button>
-                </CardContent>
-              </Card>
+              <ProductCard
+                product={product}
+                deletePending={deleteProduct.isPending}
+                onEdit={(p) => setDialog({ open: true, product: p })}
+                onDelete={(id) => void handleDelete(id)}
+              />
             </li>
           ))}
         </ul>
