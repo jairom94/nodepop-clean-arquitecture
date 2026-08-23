@@ -6,6 +6,7 @@ import { Tag } from "./src/features/tags/domain/Tag.js";
 import { PrismaProductRepository } from "./src/features/products/infraestructura/PrismaProductRepository.js";
 import { Product } from "./src/features/products/domain/Product.js";
 import { databaseClient } from "./src/database/prisma/PrismaDatabaseClient.js";
+import { readFile } from "node:fs/promises";
 
 const DEFAULT_TAGS = ["motor", "work", "lifestyle", "mobile"];
 
@@ -57,15 +58,30 @@ async function initDB() {
   );
   console.log(`Usuario creado: ${user.email} (id ${user.id})`);
 
-  for (const productData of PRODUCTS) {
+  const PRODUCTS_RAW = await readFile("./init_data/products_init.json", "utf-8");
+
+  const productsList: { name: string; price: number }[] = JSON.parse(PRODUCTS_RAW);
+
+  function shuffleArray(array:string[]): string[] {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]]; // swap
+    }
+    return array;
+  }
+
+  for (const productData of productsList) {
+    const shuffledTags = shuffleArray(DEFAULT_TAGS);
+    const tags = shuffledTags.slice(0, 2);
+    const image= `https://picsum.photos/id/${Math.floor(Math.random() * 50) + 1}/600/400`;
     const created = await productRepository.create(
       new Product({
         id: null,
         name: productData.name,
         price: productData.price,
         ownerId: user.id as number,
-        image: null,
-        tags: productData.tags.map((name) => new Tag({ id: null, name })),
+        image,
+        tags: tags.map((name) => new Tag({ id: null, name })),
       }),
     );
     console.log(`Producto creado: ${created.name} (${created.price})`);

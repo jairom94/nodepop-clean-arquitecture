@@ -75,8 +75,11 @@ tsconfig.tsbuildinfo
 *.db
 *.db-journal
 
-//Sesiones agente
+# Sesiones agente
 session-ses_01c2.md
 
-//Api client
+# Api client
 .bru/
+
+# Archivos iniciales
+init_data/
