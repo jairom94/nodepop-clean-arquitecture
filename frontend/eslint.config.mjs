@@ -2,6 +2,7 @@ import eslintConfigPrettier from "eslint-config-prettier";
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import globals from "globals";
+import queryPlugin from "@tanstack/eslint-plugin-query";
 
 export default tseslint.config(
   {
@@ -10,6 +11,7 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   eslintConfigPrettier,
+  ...queryPlugin.configs["flat/recommended"],
   {
     languageOptions: {
       globals: {

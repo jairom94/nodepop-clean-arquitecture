@@ -1,15 +1,15 @@
 import type { HttpClient } from "../ports/HttpClient";
+import type { LoginCredentials } from "./schemas/LoginCredentialsSchema";
+import { LoginResponseSchema } from "./schemas/LoginResponseSchema";
 
 export class LoginService {
-    private readonly httpClient: HttpClient;
+  private readonly httpClient: HttpClient;
   constructor(httpClient: HttpClient) {
     this.httpClient = httpClient;
   }
 
-  async execute(email: string, password: string) {
-    return this.httpClient.post('/auth/login', {
-      email,
-      password,
-    });
+  async execute(credentials: LoginCredentials) {
+    const response = await this.httpClient.post("/auth/login", credentials);
+    return LoginResponseSchema.parse(response);
   }
 }
