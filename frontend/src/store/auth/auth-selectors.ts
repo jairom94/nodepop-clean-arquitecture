@@ -7,10 +7,7 @@ export const selectToken = (state: AppStore) => state.token;
 export const selectUser = (state: AppStore): SessionUser | null => state.user;
 
 export const selectIsAuthenticated = (state: AppStore): boolean =>
-  state.token !== null && state.user !== null;
-
-export const selectIsPending = (state: AppStore): boolean =>
-  state.token === null && state.user === null;
+  state.token !== null;
 
 export const useToken = (): string | null => useAppStore(selectToken);
 
