@@ -60,6 +60,14 @@ export class PrismaProductRepository implements IProductRepository {
         });
         return PrismaProductMapper.toDomain(updated);
     }
+    async updateImage(id: number, image: string | null): Promise<Product> {
+        const updated = await databaseClient.db.product.update({
+            where:{id},
+            data:{ image },
+            include:{ tags:true }
+        });
+        return PrismaProductMapper.toDomain(updated);
+    }
     async delete(id: number): Promise<void> {
         await databaseClient.db.product.delete({
             where:{ id },

@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response, Router } from "express";
 import logger from "morgan";
 import cors from "cors";
+import path from "node:path";
 import { ErrorCodes } from "./shared/errors/error-codes.js";
 import { AppError } from "./shared/errors/AppError.js";
 import apiRouter from "./infraestructura/http/router.js";
@@ -21,6 +22,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(logger("dev"));
+
+// Archivos estáticos: imágenes subidas de productos
+app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads")));
 
 const apiVersion = "/api/v1";
 

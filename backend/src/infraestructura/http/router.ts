@@ -8,6 +8,7 @@ import { createProductRouter } from "../../features/products/create/createProduc
 import { createListProductRouter } from "../../features/products/list/listProductRoute.js";
 import { createGetProductRouter } from "../../features/products/get/getProductRoute.js";
 import { createUpdateProductRouter } from "../../features/products/update/updateProductRoute.js";
+import { createUploadProductImageRouter } from "../../features/products/upload-image/uploadProductImageRoute.js";
 import { createDeleteProductRouter } from "../../features/products/delete/deleteProductRoute.js";
 import { createTagRouter } from "../../features/tags/create/createTagRoute.js";
 import { createListTagRouter } from "../../features/tags/list/listTagRoute.js";
@@ -34,6 +35,7 @@ router.use('/products',createProductRouter());
 router.use('/products',createListProductRouter());
 router.use('/products',createGetProductRouter());
 router.use('/products',createUpdateProductRouter());
+router.use('/products',createUploadProductImageRouter());
 router.use('/products',createDeleteProductRouter());
 router.use('/tags',createTagRouter());
 router.use('/tags',createListTagRouter());

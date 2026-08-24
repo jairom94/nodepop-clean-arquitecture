@@ -7,7 +7,7 @@ export class ValidationError extends AppError {
   readonly status = 401;
 
   constructor(zodError: z.ZodError) {
-    const err = zodError.issues.map(issue => ({
+    const err = (zodError.issues ?? []).map(issue => ({
       msg:issue.message,
       field:issue.path.join("."),
       location:"body"
@@ -16,5 +16,17 @@ export class ValidationError extends AppError {
       cause: err,
       expose:true 
     });
+  }
+
+  /**
+   * Crea un ValidationError a partir de un mensaje y campo manuales,
+   * sin necesidad de construir un ZodError.
+   */
+  static fromManual(field: string, message: string) {
+    const err = new ValidationError({} as z.ZodError);
+    (err as { cause: unknown }).cause = [
+      { msg: message, field, location: "body" },
+    ];
+    return err;
   }
 }

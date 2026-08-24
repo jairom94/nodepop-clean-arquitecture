@@ -7,5 +7,6 @@ export interface IProductRepository {
      findByOwnerId(ownerId:number, skip?:number, take?:number):Promise<Product[]>;
      countByOwnerId(ownerId:number):Promise<number>;
      update(id:number, data:{name:string;price:number;image:string|null;tags:string[]}):Promise<Product>;
+     updateImage(id:number, image:string|null):Promise<Product>;
      delete(id:number):Promise<void>;
 }
