@@ -16,6 +16,8 @@ export class LoginService {
     const response = await this.httpClient.post("/auth/login", credentials);
     const data = LoginResponseSchema.parse(response);
     this.tokenStorage.setToken(data.token);
+    this.tokenStorage.setRefreshToken(data.refreshToken);
+    this.tokenStorage.setUser(JSON.stringify(data.user));
     return data;
   }
 }

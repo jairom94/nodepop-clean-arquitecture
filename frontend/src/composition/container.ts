@@ -1,5 +1,6 @@
 import { LoginService } from "@/application/auth/LoginService";
 import { LogoutService } from "@/application/auth/LogoutService";
+import { RefreshTokenService } from "@/application/auth/RefreshTokenService";
 import { RegisterService } from "@/application/auth/RegisterService";
 import { UpdateUserService } from "@/application/auth/UpdateUserService";
 import {
@@ -19,7 +20,8 @@ import { AxiosHttpClient } from "@/infrastructure/http/AxiosHttpClient";
 import { LocalStorageTokenStorage } from "@/infrastructure/storage/LocalStorageTokenStorage";
 
 export const tokenStorage = new LocalStorageTokenStorage();
-export const httpClient = new AxiosHttpClient(axiosClient, tokenStorage);
+export const refreshTokenService = new RefreshTokenService(axiosClient, tokenStorage);
+export const httpClient = new AxiosHttpClient(axiosClient, tokenStorage, refreshTokenService);
 export const loginService = new LoginService(httpClient, tokenStorage);
 export const logoutService = new LogoutService(httpClient, tokenStorage);
 export const registerService = new RegisterService(httpClient);

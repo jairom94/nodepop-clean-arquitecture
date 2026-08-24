@@ -11,10 +11,11 @@ export class LogoutService {
   }
 
   async execute(): Promise<void> {
+    const refreshToken = this.tokenStorage.getRefreshToken();
     try {
-      await this.httpClient.post("/auth/logout", {});
+      await this.httpClient.post("/auth/logout", { refreshToken });
     } finally {
-      this.tokenStorage.clearToken();
+      this.tokenStorage.clearTokens();
     }
   }
 }
