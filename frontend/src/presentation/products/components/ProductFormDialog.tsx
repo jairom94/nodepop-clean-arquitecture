@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,12 +9,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+
 const productFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio").max(100, "Máximo 100 caracteres"),
   price: z
     .number({ error: "Introduce un precio válido" })
     .positive("El precio debe ser positivo"),
-  image: z
+  imageUrl: z
     .string()
     .refine((v) => v === "" || z.url().safeParse(v).success, "Debe ser una URL válida"),
   tags: z.string().refine(
@@ -35,6 +39,7 @@ interface ProductFormDialogProps {
     name: string;
     price: number;
     image: string | null;
+    file: File | null;
     tags: string[];
   }) => Promise<void>;
 }
@@ -43,7 +48,7 @@ function toFormValues(product: ProductDto | null): ProductFormValues {
   return {
     name: product?.name ?? "",
     price: product?.price ?? ("" as unknown as number),
-    image: product?.image ?? "",
+    imageUrl: product?.image ?? "",
     tags: product?.tags.map((t) => t.name).join(", ") ?? "",
   };
 }
@@ -56,6 +61,12 @@ function parseTags(raw: string): string[] {
 }
 
 export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDialogProps) {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    product?.image ?? null,
+  );
+  const [fileError, setFileError] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -79,12 +90,35 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
     setValue("tags", next.join(", "), { shouldValidate: true });
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setFileError(null);
+    if (!file) {
+      setSelectedFile(null);
+      setPreviewUrl(product?.image ?? null);
+      return;
+    }
+    const ext = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
+    if (!ALLOWED_EXTENSIONS.includes(ext)) {
+      setFileError(`Formato no permitido. Válidos: ${ALLOWED_EXTENSIONS.join(", ")}`);
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      setFileError("La imagen no puede superar los 5 MB");
+      return;
+    }
+    setSelectedFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+  };
+
   const submit = async (values: ProductFormValues) => {
+    if (fileError) return;
     try {
       await onSubmit({
         name: values.name,
         price: values.price,
-        image: values.image ? values.image : null,
+        image: values.imageUrl ? values.imageUrl : null,
+        file: selectedFile,
         tags: parseTags(values.tags ?? ""),
       });
       onClose();
@@ -124,9 +158,32 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="image">Imagen (URL)</Label>
-              <Input id="image" placeholder="https://..." {...register("image")} />
-              {errors.image && <p className="text-sm text-destructive">{errors.image.message}</p>}
+              <Label htmlFor="image-file">Imagen</Label>
+              {previewUrl && (
+                <img
+                  src={previewUrl}
+                  alt="Vista previa"
+                  className="h-32 w-full rounded-md object-cover"
+                />
+              )}
+              <Input
+                id="image-file"
+                type="file"
+                accept={ALLOWED_EXTENSIONS.join(",")}
+                onChange={handleFileChange}
+              />
+              {fileError && <p className="text-sm text-destructive">{fileError}</p>}
+              <p className="text-xs text-muted-foreground">
+                Sube una imagen (máx. 5 MB) o deja vacío.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="imageUrl">Imagen (URL alternativa)</Label>
+              <Input id="imageUrl" placeholder="https://..." {...register("imageUrl")} />
+              {errors.imageUrl && (
+                <p className="text-sm text-destructive">{errors.imageUrl.message}</p>
+              )}
             </div>
 
             <div className="flex flex-col gap-2">

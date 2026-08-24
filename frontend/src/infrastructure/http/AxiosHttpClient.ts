@@ -7,7 +7,6 @@ export class AxiosHttpClient implements HttpClient {
 
   constructor(client: AxiosInstance, tokenStorage: TokenStorage) {
     this.client = client;
-
     this.client.interceptors.request.use((config) => {
       const token = tokenStorage.getToken();
       if (token) {
@@ -24,6 +23,13 @@ export class AxiosHttpClient implements HttpClient {
 
   async post<T, B>(url: string, body: B): Promise<T> {
     const response = await this.client.post<T>(url, body);
+    return response.data;
+  }
+
+  async postFormData<T>(url: string, data: FormData): Promise<T> {
+    const response = await this.client.post<T>(url, data, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return response.data;
   }
 
