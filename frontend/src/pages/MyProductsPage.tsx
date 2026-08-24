@@ -83,7 +83,6 @@ export default function MyProductsPage() {
   const handleCreate = async (values: {
     name: string;
     price: number;
-    image: string | null;
     file: File | null;
     tags: string[];
   }) => {
@@ -92,14 +91,13 @@ export default function MyProductsPage() {
 
   const handleUpdate = async (
     id: number,
-    values: { name: string; price: number; image: string | null; file: File | null; tags: string[] },
+    values: { name: string; price: number; file: File | null; tags: string[] },
   ) => {
     await updateProduct.mutateAsync({
       id,
       changes: {
         name: values.name,
         price: values.price,
-        image: values.image,
         tags: values.tags,
       },
     });

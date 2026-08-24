@@ -10,17 +10,6 @@ export const updateProductSchema = z.object({
     .number()
     .positive({ message: "Price must be positive" })
     .optional(),
-    image: z
-    .string()
-    .refine(
-      (val) => {
-        try { new URL(val); return true; }
-        catch { return val.startsWith("/uploads/"); }
-      },
-      { message: "Image must be a valid URL or a /uploads/ path" }
-    )
-    .nullable()
-    .optional(),
     tags: z
     .array(z.string().min(1, { message: "Tag must not be empty" }))
     .optional(),

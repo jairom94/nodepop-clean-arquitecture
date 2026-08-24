@@ -21,7 +21,7 @@ export class CreateProductHandler {
     ) {}
 
     async execute(command: CreateProductCommand): Promise<ProductResponse> {
-        let image = command.image ?? null;
+        let image: string | null = null;
 
         if (command.file) {
             const stored = await this.fileStorage.save({

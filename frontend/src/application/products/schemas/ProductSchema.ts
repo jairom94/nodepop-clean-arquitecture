@@ -29,7 +29,6 @@ export const CreateProductSchema = z.object({
     .max(100, "Máximo 100 caracteres"),
   price: z.number().positive("El precio debe ser positivo"),
   ownerId: z.number().int().positive(),
-  image: z.url("Debe ser una URL válida").nullable().optional(),
   tags: z.array(z.string().min(1)).optional(),
 });
 
@@ -39,7 +38,6 @@ export const UpdateProductSchema = z
   .object({
     name: z.string().min(1, "El nombre es obligatorio").max(100, "Máximo 100 caracteres").optional(),
     price: z.number().positive("El precio debe ser positivo").optional(),
-    image: z.url("Debe ser una URL válida").nullable().optional(),
     tags: z.array(z.string().min(1)).optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {

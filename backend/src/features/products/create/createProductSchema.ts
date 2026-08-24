@@ -14,17 +14,6 @@ export const createProductSchema = z.object({
     .number()
     .int()
     .positive({ message: "Owner is required" }),
-    image: z
-    .string()
-    .refine(
-      (val) => {
-        try { new URL(val); return true; }
-        catch { return val.startsWith("/uploads/"); }
-      },
-      { message: "Image must be a valid URL or a /uploads/ path" }
-    )
-    .nullable()
-    .optional(),
     tags: z
     .preprocess(
       (val) => {

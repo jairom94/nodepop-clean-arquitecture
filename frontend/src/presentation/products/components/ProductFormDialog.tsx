@@ -17,9 +17,6 @@ const productFormSchema = z.object({
   price: z
     .number({ error: "Introduce un precio válido" })
     .positive("El precio debe ser positivo"),
-  imageUrl: z
-    .string()
-    .refine((v) => v === "" || z.url().safeParse(v).success, "Debe ser una URL válida"),
   tags: z.string().refine(
     (v) =>
       v
@@ -38,7 +35,6 @@ interface ProductFormDialogProps {
   onSubmit: (values: {
     name: string;
     price: number;
-    image: string | null;
     file: File | null;
     tags: string[];
   }) => Promise<void>;
@@ -48,7 +44,6 @@ function toFormValues(product: ProductDto | null): ProductFormValues {
   return {
     name: product?.name ?? "",
     price: product?.price ?? ("" as unknown as number),
-    imageUrl: product?.image ?? "",
     tags: product?.tags.map((t) => t.name).join(", ") ?? "",
   };
 }
@@ -117,7 +112,6 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
       await onSubmit({
         name: values.name,
         price: values.price,
-        image: values.imageUrl ? values.imageUrl : null,
         file: selectedFile,
         tags: parseTags(values.tags ?? ""),
       });
@@ -176,14 +170,6 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
               <p className="text-xs text-muted-foreground">
                 Sube una imagen (máx. 5 MB) o deja vacío.
               </p>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="imageUrl">Imagen (URL alternativa)</Label>
-              <Input id="imageUrl" placeholder="https://..." {...register("imageUrl")} />
-              {errors.imageUrl && (
-                <p className="text-sm text-destructive">{errors.imageUrl.message}</p>
-              )}
             </div>
 
             <div className="flex flex-col gap-2">

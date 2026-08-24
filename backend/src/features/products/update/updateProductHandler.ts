@@ -30,7 +30,7 @@ export class UpdateProductHandler {
         const productUpdated = await this.productRepository.update(command.id, {
             name: command.name ?? product.name,
             price: command.price ?? product.price,
-            image: command.image !== undefined ? command.image : product.image,
+            image: product.image,
             tags: command.tags ?? product.tags.map((tag) => tag.name),
         });
         return PrismaProductMapper.toResponse(productUpdated);
