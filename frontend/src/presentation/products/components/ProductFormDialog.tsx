@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { resolveImageUrl } from "@/lib/image";
 
 const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -58,7 +59,7 @@ function parseTags(raw: string): string[] {
 export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDialogProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
-    product?.image ?? null,
+    resolveImageUrl(product?.image),
   );
   const [fileError, setFileError] = useState<string | null>(null);
 
@@ -90,7 +91,7 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
     setFileError(null);
     if (!file) {
       setSelectedFile(null);
-      setPreviewUrl(product?.image ?? null);
+      setPreviewUrl(resolveImageUrl(product?.image));
       return;
     }
     const ext = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();

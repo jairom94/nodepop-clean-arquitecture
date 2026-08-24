@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router";
 import { useProduct } from "@/presentation/products/hooks/useProduct";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { resolveImageUrl } from "@/lib/image";
 
 const eur = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
 
@@ -47,7 +48,7 @@ export default function ProductDetailPage() {
       <Card>
         {product.image && (
           <img
-            src={product.image}
+            src={resolveImageUrl(product.image) ?? undefined}
             alt={product.name}
             className="aspect-video w-full rounded-t-lg object-cover"
           />
