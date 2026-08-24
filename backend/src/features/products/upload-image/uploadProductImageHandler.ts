@@ -37,7 +37,7 @@ export class UploadProductImageHandler {
 
     // Eliminar imagen anterior si existía
     if (product.image) {
-      const oldFilename = product.image.split("/").pop();
+      const oldFilename = product.image.replace(/^\/uploads\//, "");
       if (oldFilename) {
         await this.fileStorage.delete(oldFilename);
       }

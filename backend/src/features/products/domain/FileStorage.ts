@@ -1,5 +1,6 @@
 export interface StoredFile {
   filename: string;
+  thumbnailFilename: string;
   path: string;
   mimetype: string;
   size: number;

@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import type { ProductDto } from "@/application/products/schemas/ProductSchema";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { toThumbnailUrl } from "@/lib/image";
 
 const eur = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
 
@@ -18,8 +19,19 @@ export function ProductCard({
   onEdit,
   onDelete,
 }: ProductCardProps) {
+  const thumb = toThumbnailUrl(product.image);
+
   return (
     <Card className="flex h-full flex-col">
+      {thumb && (
+        <Link to={`/products/${product.id}`}>
+          <img
+            src={thumb}
+            alt={product.name}
+            className="aspect-video w-full rounded-t-lg object-cover"
+          />
+        </Link>
+      )}
       <CardHeader>
         <CardTitle className="line-clamp-2">
           <Link to={`/products/${product.id}`} className="hover:underline">
