@@ -6,7 +6,14 @@ export class CreateProductController {
 
     async execute(req:Request,res:Response,next:NextFunction) {
         try {
-            const product = await this.handler.execute(req.body);
+            const product = await this.handler.execute({
+                ...req.body,
+                file: req.file ? {
+                    buffer: req.file.buffer,
+                    originalname: req.file.originalname,
+                    mimetype: req.file.mimetype,
+                } : undefined,
+            });
             res.status(201).json(product);
         } catch (error) {
             next(error);

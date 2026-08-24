@@ -1,6 +1,6 @@
 import multer, { type FileFilterCallback } from "multer";
 import path from "node:path";
-import type { Request } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { ValidationError } from "../../../shared/errors/ValidationError.js";
 
 const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
@@ -30,14 +30,33 @@ const fileFilter = (
   }
 };
 
-/**
- * Middleware de multer para subir una única imagen de producto.
- * El archivo se guarda en memoria y el controlador se encarga de persistirlo.
- */
-export const uploadProductImage = multer({
+const multerInstance = multer({
   storage: multer.memoryStorage(),
   fileFilter,
   limits: {
     fileSize: MAX_FILE_SIZE,
   },
-}).single("image");
+});
+
+/**
+ * Middleware de multer para subir una única imagen de producto.
+ * El archivo se guarda en memoria y el controlador se encarga de persistirlo.
+ */
+export const uploadProductImage = multerInstance.single("image");
+
+/**
+ * Middleware opcional: solo procesa el archivo si el Content-Type es multipart/form-data.
+ * Permite que un mismo endpoint acepte JSON (sin imagen) y multipart/form-data (con imagen).
+ */
+export const uploadProductImageIfMultipart = (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+): void => {
+  const contentType = req.headers["content-type"] ?? "";
+  if (contentType.includes("multipart/form-data")) {
+    multerInstance.single("image")(req, _res, next);
+  } else {
+    next();
+  }
+};
