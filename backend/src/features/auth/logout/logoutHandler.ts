@@ -10,15 +10,22 @@ export class LogoutHandler {
   ) {}
 
   async execute(command: LogoutCommand): Promise<void> {
-    if (!command.token) {
+    if (!command.token && !command.refreshToken) {
       throw new UnauthorizedError("Token is required");
     }
 
-    const expiresAt = this.tokenService.getExpiry(command.token);
-    if (!expiresAt) {
-      throw new UnauthorizedError("Invalid token");
+    if (command.token) {
+      const expiresAt = this.tokenService.getExpiry(command.token);
+      if (expiresAt) {
+        await this.tokenRepository.revoke(command.token, expiresAt);
+      }
     }
 
-    await this.tokenRepository.revoke(command.token, expiresAt);
+    if (command.refreshToken) {
+      const expiresAt = this.tokenService.getExpiry(command.refreshToken);
+      if (expiresAt) {
+        await this.tokenRepository.revoke(command.refreshToken, expiresAt);
+      }
+    }
   }
 }

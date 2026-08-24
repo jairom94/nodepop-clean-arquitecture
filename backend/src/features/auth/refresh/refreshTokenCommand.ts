@@ -4,4 +4,5 @@ export interface RefreshTokenCommand {
 
 export interface RefreshTokenResult {
   token: string;
+  refreshToken: string;
 }

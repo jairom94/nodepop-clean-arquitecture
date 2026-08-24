@@ -10,7 +10,8 @@ export class LogoutController {
             const token = authorization?.startsWith("Bearer ")
                 ? authorization.slice("Bearer ".length)
                 : req.body?.token;
-            await this.handler.execute({ token });
+            const refreshToken = req.body?.refreshToken;
+            await this.handler.execute({ token, refreshToken });
             res.status(204).send();
         } catch (error) {
             next(error);

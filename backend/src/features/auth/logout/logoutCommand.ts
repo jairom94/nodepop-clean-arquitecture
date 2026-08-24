@@ -1,3 +1,4 @@
 export interface LogoutCommand {
-  token: string;
+  token?: string;
+  refreshToken?: string;
 }
