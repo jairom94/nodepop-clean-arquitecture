@@ -13,6 +13,7 @@ export class UploadProductImageController {
 
       const product = await this.handler.execute({
         id: Number(req.params.id),
+        ownerId: Number(req.user?.sub),
         file: {
           buffer: req.file.buffer,
           originalname: req.file.originalname,

@@ -2,6 +2,7 @@ import { IProductRepository } from "../domain/productRepository.js";
 import { PrismaProductMapper } from "../infraestructura/PrismaProductMapper.js";
 import { UpdateProductCommand } from "./updateProductCommand.js";
 import { ProductNotFoundError } from "./errors/ProductNotFound.js";
+import { ForbiddenError } from "../../../shared/errors/ForbiddenError.js";
 
 interface ProductResponse {
   id: number|null;
@@ -25,6 +26,10 @@ export class UpdateProductHandler {
         const product = await this.productRepository.findById(command.id);
         if (!product) {
             throw new ProductNotFoundError(command.id);
+        }
+
+        if (product.ownerId !== command.ownerId) {
+            throw new ForbiddenError("You are not the owner of this product");
         }
 
         const productUpdated = await this.productRepository.update(command.id, {

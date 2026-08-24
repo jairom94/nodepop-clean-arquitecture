@@ -9,11 +9,6 @@ export const createProductSchema = z.object({
     .coerce
     .number()
     .positive({ message: "Price must be positive" }),
-    ownerId: z
-    .coerce
-    .number()
-    .int()
-    .positive({ message: "Owner is required" }),
     tags: z
     .preprocess(
       (val) => {

@@ -9,6 +9,7 @@ export class UpdateProductController {
             const product = await this.handler.execute({
                 id: Number(req.params.id),
                 ...req.body,
+                ownerId: Number(req.user?.sub),
             });
             res.status(200).json(product);
         } catch (error) {

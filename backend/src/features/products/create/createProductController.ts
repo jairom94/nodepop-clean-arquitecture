@@ -8,6 +8,7 @@ export class CreateProductController {
         try {
             const product = await this.handler.execute({
                 ...req.body,
+                ownerId: Number(req.user?.sub),
                 file: req.file ? {
                     buffer: req.file.buffer,
                     originalname: req.file.originalname,

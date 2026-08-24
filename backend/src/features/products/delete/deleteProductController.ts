@@ -8,6 +8,7 @@ export class DeleteProductController {
         try {
             await this.handler.execute({
                 id: Number(req.params.id),
+                ownerId: Number(req.user?.sub),
             });
             res.status(204).send();
         } catch (error) {
