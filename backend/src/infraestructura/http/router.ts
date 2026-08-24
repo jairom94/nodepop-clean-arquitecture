@@ -15,6 +15,7 @@ import { createListTagRouter } from "../../features/tags/list/listTagRoute.js";
 import { createUpdateTagRouter } from "../../features/tags/update/updateTagRoute.js";
 import { createDeleteTagRouter } from "../../features/tags/delete/deleteTagRoute.js";
 import { authGuard } from "./middleware/AuthGuard.js";
+import { rateLimitPresets } from "./middleware/RateLimit.js";
 import { JwtTokenService } from "../security/JwtTokenService.js";
 import { PrismaTokenRepository } from "../../features/auth/infraestructura/PrismaTokenRepository.js";
 
@@ -22,11 +23,14 @@ const router = Router();
 
 
 // Rutas publicas
-router.use('/auth/login',createLoginRouter());
+// Rate limit estricto en login para mitigar ataques de fuerza bruta
+router.use('/auth/login', rateLimitPresets.login(), createLoginRouter());
 router.use('/auth/refresh',createRefreshTokenRouter());
 router.use('/users',createUserRouter());
 
 // Rutas protegidas
+// Rate limit global para todas las rutas autenticadas
+router.use(rateLimitPresets.global());
 router.use(authGuard(new JwtTokenService(), new PrismaTokenRepository()));
 
 router.use('/auth/logout',createLogoutRouter());
