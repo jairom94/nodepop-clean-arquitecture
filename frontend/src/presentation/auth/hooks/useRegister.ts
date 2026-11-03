@@ -4,7 +4,6 @@ import { useMutation } from "@tanstack/react-query";
 
 export function useRegister() {
   return useMutation({
-    mutationFn: (credentials: RegisterCredentials) =>
-      registerService.execute(credentials),
+    mutationFn: (credentials: RegisterCredentials) => registerService.execute(credentials),
   });
 }

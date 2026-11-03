@@ -3,19 +3,9 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAxiosError } from "axios";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  UpdateUserSchema,
-  type UpdateUserDto,
-} from "@/application/auth/schemas/UpdateUserSchema";
+import { UpdateUserSchema, type UpdateUserDto } from "@/application/auth/schemas/UpdateUserSchema";
 import { useUser, useAuthActions } from "@/store/auth/auth-selectors";
 import { useUpdateUser } from "./hooks/useUpdateUser";
 
@@ -68,124 +58,108 @@ export function UpdateProfile() {
     }
   };
 
-  if (!user) {
-    return (
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Sesión requerida</CardTitle>
-          <CardDescription>
-            Debes iniciar sesión para editar tu perfil
-          </CardDescription>
-        </CardHeader>
-      </Card>
-    );
-  }
+  // La ruta está protegida: sin usuario no hay formulario que mostrar.
+  if (!user) return null;
 
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle>Mi perfil</CardTitle>
-        <CardDescription>
-          Actualiza tu información personal
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-4"
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="mt-6 flex flex-col gap-4 rounded-2xl bg-card p-6"
+    >
+      {errors.root && (
+        <p
+          role="alert"
+          className="rounded-xl bg-destructive/10 px-3.5 py-2.5 text-sm font-medium text-destructive"
         >
-          {errors.root && (
-            <p className="text-sm text-destructive">{errors.root.message}</p>
+          {errors.root.message}
+        </p>
+      )}
+      {isSuccess && (
+        <p
+          role="status"
+          className="rounded-xl bg-success/10 px-3.5 py-2.5 text-sm font-medium text-success"
+        >
+          Perfil actualizado correctamente
+        </p>
+      )}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Controller
+          name="name"
+          control={control}
+          render={({ field, fieldState }) => (
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="name">Nombre</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Tu nombre"
+                aria-invalid={!!fieldState.error}
+                {...field}
+              />
+              {fieldState.error && (
+                <p className="text-sm text-destructive">{fieldState.error.message}</p>
+              )}
+            </div>
           )}
-          {isSuccess && (
-            <p className="rounded-md bg-emerald-500/10 px-3 py-2 text-sm text-emerald-600 dark:text-emerald-400">
-              Perfil actualizado correctamente
-            </p>
+        />
+        <Controller
+          name="lastname1"
+          control={control}
+          render={({ field, fieldState }) => (
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="lastname1">Apellido</Label>
+              <Input
+                id="lastname1"
+                type="text"
+                placeholder="Tu apellido"
+                aria-invalid={!!fieldState.error}
+                {...field}
+              />
+              {fieldState.error && (
+                <p className="text-sm text-destructive">{fieldState.error.message}</p>
+              )}
+            </div>
           )}
-          <Controller
-            name="name"
-            control={control}
-            render={({ field, fieldState }) => (
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="name">Nombre</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Tu nombre"
-                  aria-invalid={!!fieldState.error}
-                  {...field}
-                />
-                {fieldState.error && (
-                  <p className="text-sm text-destructive">
-                    {fieldState.error.message}
-                  </p>
-                )}
-              </div>
+        />
+      </div>
+      <Controller
+        name="email"
+        control={control}
+        render={({ field, fieldState }) => (
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="tu@email.com"
+              aria-invalid={!!fieldState.error}
+              {...field}
+            />
+            {fieldState.error && (
+              <p className="text-sm text-destructive">{fieldState.error.message}</p>
             )}
-          />
-          <Controller
-            name="lastname1"
-            control={control}
-            render={({ field, fieldState }) => (
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="lastname1">Apellido</Label>
-                <Input
-                  id="lastname1"
-                  type="text"
-                  placeholder="Tu apellido"
-                  aria-invalid={!!fieldState.error}
-                  {...field}
-                />
-                {fieldState.error && (
-                  <p className="text-sm text-destructive">
-                    {fieldState.error.message}
-                  </p>
-                )}
-              </div>
-            )}
-          />
-          <Controller
-            name="email"
-            control={control}
-            render={({ field, fieldState }) => (
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="tu@email.com"
-                  aria-invalid={!!fieldState.error}
-                  {...field}
-                />
-                {fieldState.error && (
-                  <p className="text-sm text-destructive">
-                    {fieldState.error.message}
-                  </p>
-                )}
-              </div>
-            )}
-          />
-          <div className="flex items-center gap-2 pt-2">
-            <Button type="submit" disabled={update.isPending}>
-              {update.isPending ? "Guardando..." : "Guardar cambios"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() =>
-                reset({
-                  name: user.name,
-                  lastname1: user.lastname1,
-                  email: user.email,
-                })
-              }
-              disabled={update.isPending}
-            >
-              Cancelar
-            </Button>
           </div>
-        </form>
-      </CardContent>
-    </Card>
+        )}
+      />
+      <div className="flex items-center gap-2 pt-2">
+        <Button type="submit" disabled={update.isPending}>
+          {update.isPending ? "Guardando..." : "Guardar cambios"}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            reset({
+              name: user.name,
+              lastname1: user.lastname1,
+              email: user.email,
+            })
+          }
+          disabled={update.isPending}
+        >
+          Cancelar
+        </Button>
+      </div>
+    </form>
   );
 }

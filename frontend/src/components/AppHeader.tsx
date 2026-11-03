@@ -1,113 +1,106 @@
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router";
-import { Menu, X, User } from "lucide-react";
-import { useIsAuthenticated, useAuthActions } from "@/store/auth/auth-selectors";
-import { useLogout } from "@/presentation/auth/hooks/useLogout";
-import { Button } from "@/components/ui/button";
+import { Link, NavLink, useLocation } from "react-router";
+import { Menu, Moon, Plus, Sun, User, X } from "lucide-react";
+import { useIsAuthenticated, useUser } from "@/store/auth/auth-selectors";
+import { useThemeStore } from "@/store/theme/theme-store";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { CatalogSearch } from "@/presentation/catalog/components/CatalogSearch";
+import { UserAvatar } from "@/presentation/components/UserAvatar";
 
-const navItems = [
-  { to: "/", label: "Inicio", end: true },
-  { to: "/products", label: "Productos" },
-];
+const SELL_PATH = "/my-products?new=1";
 
 export function AppHeader() {
-  const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const isAuthenticated = useIsAuthenticated();
-  const { clearSession } = useAuthActions();
-  const logout = useLogout();
+  const user = useUser();
+  const theme = useThemeStore((state) => state.theme);
+  const toggleTheme = useThemeStore((state) => state.toggleTheme);
 
-  const items = isAuthenticated
-    ? navItems
-    : [...navItems, { to: "/login", label: "Login", end: false }];
-
-  const handleLogout = async () => {
-    setIsOpen(false);
-    await logout.mutateAsync();
-    clearSession();
-    navigate("/login", { replace: true });
-  };
+  const items = [
+    { to: "/products", label: "Productos" },
+    isAuthenticated
+      ? { to: "/my-products", label: "Mis productos" }
+      : { to: "/login", label: "Iniciar sesión" },
+  ];
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    [
-      "rounded-md px-3 py-2 text-sm font-medium transition-colors",
-      isActive
-        ? "bg-secondary text-secondary-foreground"
-        : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground",
-    ].join(" ");
+    cn(
+      "inline-flex min-h-11 items-center rounded-full px-3.5 font-medium transition-colors hover:bg-secondary",
+      isActive && "font-semibold text-primary",
+    );
+
+  const themeLabel = theme === "dark" ? "Usar tema claro" : "Usar tema oscuro";
+  const ThemeIcon = theme === "dark" ? Sun : Moon;
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-14 w-full max-w-5xl items-center gap-4 px-4">
-        <NavLink to="/" className="text-lg font-semibold tracking-tight">
-          Nodepop
-        </NavLink>
-
-        {/* Nav desktop */}
-        <nav className="hidden items-center gap-1 sm:flex">
-          {items.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={linkClass}
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
-
-        {/* Acciones desktop */}
-        <div className="ml-auto hidden items-center gap-1 sm:flex">
-          {isAuthenticated && (
-            <NavLink
-              to="/profile"
-              className={({ isActive }) =>
-                [
-                  "inline-flex size-8 items-center justify-center rounded-md transition-colors",
-                  isActive
-                    ? "bg-secondary text-secondary-foreground"
-                    : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground",
-                ].join(" ")
-              }
-              aria-label="Mi perfil"
-            >
-              <User className="size-4" />
-            </NavLink>
-          )}
-          {isAuthenticated && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => void handleLogout()}
-              disabled={logout.isPending}
-            >
-              {logout.isPending ? "Saliendo..." : "Cerrar sesión"}
-            </Button>
-          )}
-        </div>
-
-        {/* Botón menú móvil */}
-        <button
-          type="button"
-          className="ml-auto inline-flex size-9 items-center justify-center rounded-md text-muted-foreground hover:bg-secondary hover:text-secondary-foreground sm:hidden"
-          aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
-          aria-expanded={isOpen}
-          onClick={() => setIsOpen((prev) => !prev)}
+    <header className="sticky top-0 z-40 border-b bg-card">
+      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-x-2 gap-y-2 px-4 py-3 sm:gap-x-4 sm:px-6">
+        <Link
+          to="/"
+          className="font-heading text-[1.625rem] font-extrabold tracking-tight text-primary"
         >
-          {isOpen ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
+          nodepop
+        </Link>
+
+        {pathname.startsWith("/products") && (
+          <CatalogSearch
+            placeholder="Busca bicis, sofás, cámaras…"
+            className="order-last w-full md:order-none md:w-auto md:flex-1"
+          />
+        )}
+
+        <div className="ml-auto flex items-center gap-1">
+          <nav aria-label="Principal" className="hidden items-center gap-1 md:flex">
+            {items.map((item) => (
+              <NavLink key={item.to} to={item.to} className={linkClass}>
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
+
+          <Link to={SELL_PATH} className={buttonVariants({ className: "px-3.5 sm:mx-1 sm:px-5" })}>
+            <Plus className="size-4" aria-hidden="true" />
+            Vender
+          </Link>
+
+          <Button variant="ghost" size="icon" aria-label={themeLabel} onClick={toggleTheme}>
+            <ThemeIcon className="size-5" />
+          </Button>
+
+          {isAuthenticated && (
+            <Link to="/profile" aria-label="Mi perfil" className="hidden rounded-full md:block">
+              {user ? (
+                <UserAvatar name={user.name} lastname={user.lastname1} />
+              ) : (
+                <span className="flex size-11 items-center justify-center rounded-full bg-accent">
+                  <User className="size-5" aria-hidden="true" />
+                </span>
+              )}
+            </Link>
+          )}
+
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={isOpen}
+            onClick={() => setIsOpen((prev) => !prev)}
+          >
+            {isOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          </Button>
+        </div>
       </div>
 
-      {/* Panel menú móvil */}
       {isOpen && (
-        <nav className="border-t sm:hidden">
-          <div className="mx-auto flex w-full max-w-5xl flex-col gap-1 px-4 py-3">
+        <nav aria-label="Menú móvil" className="border-t md:hidden">
+          <div className="flex flex-col gap-1 px-4 py-3">
             {items.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.end}
                 className={linkClass}
                 onClick={() => setIsOpen(false)}
               >
@@ -115,24 +108,9 @@ export function AppHeader() {
               </NavLink>
             ))}
             {isAuthenticated && (
-              <>
-                <NavLink
-                  to="/profile"
-                  className={linkClass}
-                  onClick={() => setIsOpen(false)}
-                >
-                  Mi perfil
-                </NavLink>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="mt-1 justify-start"
-                  onClick={() => void handleLogout()}
-                  disabled={logout.isPending}
-                >
-                  {logout.isPending ? "Saliendo..." : "Cerrar sesión"}
-                </Button>
-              </>
+              <NavLink to="/profile" className={linkClass} onClick={() => setIsOpen(false)}>
+                Mi perfil
+              </NavLink>
             )}
           </div>
         </nav>

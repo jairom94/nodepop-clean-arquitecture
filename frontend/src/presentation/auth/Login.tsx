@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAxiosError } from "axios";
@@ -6,19 +6,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LoginCredentialsSchema, type LoginCredentials } from "@/application/auth/schemas/LoginCredentialsSchema";
+import {
+  LoginCredentialsSchema,
+  type LoginCredentials,
+} from "@/application/auth/schemas/LoginCredentialsSchema";
 import { useAuthActions } from "@/store/auth/auth-selectors";
 import { useLogin } from "./hooks/useLogin";
 
 export function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setSession } = useAuthActions();
   const {
     control,
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm<LoginCredentials>({ resolver: zodResolver(LoginCredentialsSchema) });
+  } = useForm<LoginCredentials>({
+    resolver: zodResolver(LoginCredentialsSchema),
+    defaultValues: { email: "", password: "" },
+  });
 
   const login = useLogin();
 
@@ -26,7 +33,8 @@ export function Login() {
     try {
       const session = await login.mutateAsync(values);
       setSession(session);
-      navigate("/", { replace: true });
+      const from = (location.state as { from?: string } | null)?.from ?? "/";
+      navigate(from, { replace: true });
     } catch (err) {
       const message =
         isAxiosError(err) && err.response?.status === 401
@@ -37,14 +45,23 @@ export function Login() {
   };
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-md rounded-3xl px-4 py-8">
       <CardHeader>
-        <CardTitle>Iniciar sesión</CardTitle>
-        <CardDescription>Ingresa tus credenciales para acceder</CardDescription>
+        <CardTitle className="font-heading text-3xl leading-tight font-extrabold tracking-tight">
+          Iniciar sesión
+        </CardTitle>
+        <CardDescription>Entra para gestionar tus anuncios</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
+          {errors.root && (
+            <p
+              role="alert"
+              className="rounded-xl bg-destructive/10 px-3.5 py-2.5 text-sm font-medium text-destructive"
+            >
+              {errors.root.message}
+            </p>
+          )}
           <Controller
             name="email"
             control={control}
@@ -83,13 +100,16 @@ export function Login() {
               </div>
             )}
           />
-          <Button type="submit" className="w-full" disabled={login.isPending}>
+          <Button type="submit" size="lg" className="w-full" disabled={login.isPending}>
             {login.isPending ? "Entrando..." : "Entrar"}
           </Button>
         </form>
         <p className="mt-4 text-center text-sm text-muted-foreground">
           ¿No tienes cuenta?{" "}
-          <Link to="/register" className="text-primary underline-offset-4 hover:underline">
+          <Link
+            to="/register"
+            className="font-semibold text-primary underline-offset-4 hover:underline"
+          >
             Regístrate
           </Link>
         </p>

@@ -1,38 +1,29 @@
 import { Link } from "react-router";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { PageContainer } from "@/components/PageContainer";
 
 export default function NotFoundPage() {
   return (
-    <section className="flex flex-col items-center justify-center gap-6 py-16 text-center">
-      <div className="relative">
-        <h1 className="select-none text-[8rem] font-bold leading-none tracking-tighter text-muted/40 sm:text-[12rem]">
+    <PageContainer>
+      <section className="flex flex-col items-center rounded-3xl bg-card px-6 py-14 text-center">
+        <p className="rounded-2xl bg-price px-6 py-2 font-heading text-7xl leading-none font-extrabold text-price-foreground sm:text-8xl">
           404
-        </h1>
-        <span className="absolute inset-0 flex items-center justify-center">
-          <span className="rounded-full bg-destructive/10 px-4 py-1 text-sm font-medium text-destructive">
-            Error
-          </span>
-        </span>
-      </div>
-
-      <div className="space-y-2">
-        <h2 className="text-2xl font-semibold tracking-tight">
-          Página no encontrada
-        </h2>
-        <p className="max-w-md text-muted-foreground">
-          La página que buscas no existe o ha sido movida. Verifica la URL o
-          vuelve al inicio para seguir explorando.
         </p>
-      </div>
-
-      <div className="flex flex-wrap items-center justify-center gap-2">
-        <Button render={<Link to="/" />}>
-          Volver al inicio
-        </Button>
-        <Button variant="outline" render={<Link to="/products" />}>
-          Ver productos
-        </Button>
-      </div>
-    </section>
+        <h1 className="mt-5 font-heading text-3xl leading-tight font-extrabold tracking-tight">
+          Esta página ya no está aquí
+        </h1>
+        <p className="mt-1 mb-5 text-muted-foreground">
+          Puede que se haya movido o que la dirección no sea correcta.
+        </p>
+        <div className="flex flex-wrap justify-center gap-2">
+          <Link to="/products" className={buttonVariants()}>
+            Ver productos
+          </Link>
+          <Link to="/" className={buttonVariants({ variant: "outline" })}>
+            Volver al inicio
+          </Link>
+        </div>
+      </section>
+    </PageContainer>
   );
 }

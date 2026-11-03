@@ -1,10 +1,14 @@
 import { useState } from "react";
+import { Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import type { TagDto } from "@/application/tags/schemas/TagSchema";
 import { useTags } from "@/presentation/tags/hooks/useTags";
 import { useCreateTag } from "@/presentation/tags/hooks/useCreateTag";
 import { useUpdateTag } from "@/presentation/tags/hooks/useUpdateTag";
 import { useDeleteTag } from "@/presentation/tags/hooks/useDeleteTag";
+import { ConfirmDialog } from "@/presentation/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
 interface TagsManagerDialogProps {
@@ -20,6 +24,7 @@ export function TagsManagerDialog({ onClose }: TagsManagerDialogProps) {
   const [newName, setNewName] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState("");
+  const [deleting, setDeleting] = useState<TagDto | null>(null);
 
   const handleCreate = async () => {
     const name = newName.trim();
@@ -28,7 +33,7 @@ export function TagsManagerDialog({ onClose }: TagsManagerDialogProps) {
       await createTag.mutateAsync(name);
       setNewName("");
     } catch {
-      window.alert("No se pudo crear el tag (¿nombre duplicado?)");
+      toast.error("No se pudo crear el tag (¿nombre duplicado?)");
     }
   };
 
@@ -39,101 +44,112 @@ export function TagsManagerDialog({ onClose }: TagsManagerDialogProps) {
       await updateTag.mutateAsync({ id, name });
       setEditingId(null);
     } catch {
-      window.alert("No se pudo renombrar el tag (¿nombre duplicado?)");
+      toast.error("No se pudo renombrar el tag (¿nombre duplicado?)");
     }
   };
 
-  const handleDelete = async (id: number, name: string) => {
-    if (!window.confirm(`¿Eliminar el tag "${name}"?`)) return;
-    await deleteTag.mutateAsync(id);
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteTag.mutateAsync(id);
+    } catch {
+      toast.error("No se pudo eliminar el tag");
+    } finally {
+      setDeleting(null);
+    }
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
-      onClick={onClose}
-    >
-      <Card className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-        <CardHeader>
-          <CardTitle>Gestionar tags</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <div className="flex gap-2">
-            <Input
-              placeholder="Nuevo tag (máx. 50 caracteres)"
-              maxLength={50}
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") void handleCreate();
-              }}
-            />
-            <Button onClick={() => void handleCreate()} disabled={createTag.isPending}>
-              Crear
-            </Button>
-          </div>
+    <Dialog open onOpenChange={(next) => !next && onClose()}>
+      <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Gestionar tags</DialogTitle>
+        </DialogHeader>
 
-          {tagsQuery.isPending && (
-            <p className="text-sm text-muted-foreground">Cargando tags...</p>
-          )}
-          {tagsQuery.isError && (
-            <p className="text-sm text-destructive">No se pudieron cargar los tags</p>
-          )}
-
-          <ul className="flex max-h-64 flex-col divide-y overflow-y-auto">
-            {(tagsQuery.data ?? []).map((tag) => (
-              <li key={tag.id} className="flex items-center gap-2 py-2">
-                {editingId === tag.id ? (
-                  <>
-                    <Input
-                      autoFocus
-                      value={editingName}
-                      maxLength={50}
-                      onChange={(e) => setEditingName(e.target.value)}
-                    />
-                    <Button size="sm" onClick={() => void handleRename(tag.id as number)}>
-                      Guardar
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => setEditingId(null)}>
-                      Cancelar
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <span className="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground">
-                      {tag.name}
-                    </span>
-                    <span className="ml-auto flex gap-1">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setEditingId(tag.id as number);
-                          setEditingName(tag.name);
-                        }}
-                      >
-                        Renombrar
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        disabled={deleteTag.isPending}
-                        onClick={() => void handleDelete(tag.id as number, tag.name)}
-                      >
-                        Eliminar
-                      </Button>
-                    </span>
-                  </>
-                )}
-              </li>
-            ))}
-          </ul>
-
-          <Button variant="outline" onClick={onClose} className="self-end">
-            Cerrar
+        <form
+          className="flex gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleCreate();
+          }}
+        >
+          <Input
+            aria-label="Nuevo tag"
+            placeholder="Nuevo tag (máx. 50 caracteres)"
+            maxLength={50}
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+          />
+          <Button type="submit" disabled={createTag.isPending}>
+            Crear
           </Button>
-        </CardContent>
-      </Card>
-    </div>
+        </form>
+
+        {tagsQuery.isPending && <p className="text-muted-foreground">Cargando tags...</p>}
+        {tagsQuery.isError && <p className="text-destructive">No se pudieron cargar los tags</p>}
+
+        <ul className="flex flex-col divide-y">
+          {(tagsQuery.data ?? []).map((tag) => (
+            <li key={tag.id} className="flex flex-wrap items-center gap-2 py-2">
+              {editingId === tag.id ? (
+                <>
+                  <Input
+                    autoFocus
+                    aria-label={`Nuevo nombre del tag ${tag.name}`}
+                    className="min-w-32 flex-1"
+                    value={editingName}
+                    maxLength={50}
+                    onChange={(e) => setEditingName(e.target.value)}
+                  />
+                  <Button size="sm" onClick={() => void handleRename(tag.id as number)}>
+                    Guardar
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => setEditingId(null)}>
+                    Cancelar
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <span className="mr-auto rounded-full bg-secondary px-3 py-1 text-sm font-medium">
+                    {tag.name}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`Renombrar ${tag.name}`}
+                    onClick={() => {
+                      setEditingId(tag.id as number);
+                      setEditingName(tag.name);
+                    }}
+                  >
+                    <Pencil />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive"
+                    aria-label={`Eliminar ${tag.name}`}
+                    onClick={() => setDeleting(tag)}
+                  >
+                    <Trash2 />
+                  </Button>
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
+
+        {deleting && (
+          <ConfirmDialog
+            open
+            title="¿Eliminar este tag?"
+            description={`«${deleting.name}» se quitará de los productos que lo usan.`}
+            confirmLabel="Eliminar"
+            pending={deleteTag.isPending}
+            onConfirm={() => void handleDelete(deleting.id as number)}
+            onCancel={() => setDeleting(null)}
+          />
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }

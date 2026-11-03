@@ -1,92 +1,92 @@
-import { useState } from "react";
+import { useState, type ChangeEvent, type KeyboardEvent } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import type { ProductDto } from "@/application/products/schemas/ProductSchema";
 import { useTags } from "@/presentation/tags/hooks/useTags";
+import { ProductImage } from "@/presentation/components/ProductImage";
+import { TagChip } from "@/presentation/components/TagChip";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { resolveImageUrl } from "@/lib/image";
 
 const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+const MAX_TAGS = 10;
 
 const productFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio").max(100, "Máximo 100 caracteres"),
-  price: z
-    .number({ error: "Introduce un precio válido" })
-    .positive("El precio debe ser positivo"),
-  tags: z.string().refine(
-    (v) =>
-      v
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean).length <= 10,
-    "Máximo 10 tags",
-  ),
+  price: z.number({ error: "Introduce un precio válido" }).positive("El precio debe ser positivo"),
 });
 
 type ProductFormValues = z.infer<typeof productFormSchema>;
 
+export interface ProductFormResult extends ProductFormValues {
+  file: File | null;
+  tags: string[];
+}
+
 interface ProductFormDialogProps {
   product: ProductDto | null;
   onClose: () => void;
-  onSubmit: (values: {
-    name: string;
-    price: number;
-    file: File | null;
-    tags: string[];
-  }) => Promise<void>;
-}
-
-function toFormValues(product: ProductDto | null): ProductFormValues {
-  return {
-    name: product?.name ?? "",
-    price: product?.price ?? ("" as unknown as number),
-    tags: product?.tags.map((t) => t.name).join(", ") ?? "",
-  };
-}
-
-function parseTags(raw: string): string[] {
-  return raw
-    .split(",")
-    .map((t) => t.trim())
-    .filter(Boolean);
+  onSubmit: (values: ProductFormResult) => Promise<void>;
 }
 
 export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDialogProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(
-    resolveImageUrl(product?.image),
-  );
+  const [previewUrl, setPreviewUrl] = useState<string | null>(resolveImageUrl(product?.image));
   const [fileError, setFileError] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = useState<string[]>(
+    product?.tags.map((tag) => tag.name) ?? [],
+  );
+  const [newTag, setNewTag] = useState("");
 
   const {
     register,
     handleSubmit,
     setError,
-    setValue,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
-    defaultValues: toFormValues(product),
+    defaultValues: {
+      name: product?.name ?? "",
+      price: product?.price ?? ("" as unknown as number),
+    },
   });
 
   const tagsQuery = useTags();
-  const tagsValue = watch("tags") ?? "";
+  const existingTags = (tagsQuery.data ?? []).map((tag) => tag.name);
+  const allTags = [...new Set([...existingTags, ...selectedTags])];
+  const tagLimitReached = selectedTags.length >= MAX_TAGS;
 
   const toggleTag = (name: string) => {
-    const current = parseTags(tagsValue);
-    const next = current.includes(name)
-      ? current.filter((t) => t !== name)
-      : [...current, name];
-    setValue("tags", next.join(", "), { shouldValidate: true });
+    if (selectedTags.includes(name)) {
+      setSelectedTags(selectedTags.filter((tag) => tag !== name));
+    } else if (!tagLimitReached) {
+      setSelectedTags([...selectedTags, name]);
+    }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNewTagKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== "Enter") return;
+    e.preventDefault();
+    const name = newTag.trim();
+    if (!name) return;
+    if (!selectedTags.includes(name) && !tagLimitReached) {
+      setSelectedTags([...selectedTags, name]);
+    }
+    setNewTag("");
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setFileError(null);
     if (!file) {
@@ -110,12 +110,7 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
   const submit = async (values: ProductFormValues) => {
     if (fileError) return;
     try {
-      await onSubmit({
-        name: values.name,
-        price: values.price,
-        file: selectedFile,
-        tags: parseTags(values.tags ?? ""),
-      });
+      await onSubmit({ ...values, file: selectedFile, tags: selectedTags });
       onClose();
     } catch {
       setError("root", { message: "No se pudo guardar el producto. Inténtalo de nuevo" });
@@ -123,97 +118,109 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
-      onClick={onClose}
-    >
-      <Card className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-        <CardHeader>
-          <CardTitle>{product ? "Editar producto" : "Nuevo producto"}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(submit)} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
+    <Dialog open onOpenChange={(next) => !next && onClose()}>
+      <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>{product ? "Editar producto" : "Nuevo producto"}</DialogTitle>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit(submit)} className="flex flex-col gap-4">
+          <div>
+            <div className="relative">
+              <ProductImage
+                src={previewUrl}
+                name="Vista previa"
+                tags={selectedTags}
+                seed={product?.id ?? 0}
+                className="aspect-video w-full rounded-2xl"
+              />
+              <label className="absolute right-2.5 bottom-2.5 inline-flex h-10 cursor-pointer items-center rounded-full bg-card px-3.5 text-sm font-semibold has-focus-visible:ring-3 has-focus-visible:ring-ring/50">
+                {previewUrl ? "Cambiar foto" : "Añadir foto"}
+                <input
+                  id="image-file"
+                  type="file"
+                  accept={ALLOWED_EXTENSIONS.join(",")}
+                  onChange={handleFileChange}
+                  className="sr-only"
+                />
+              </label>
+            </div>
+            {fileError ? (
+              <p className="mt-1.5 text-sm text-destructive">{fileError}</p>
+            ) : (
+              <p className="mt-1.5 text-sm text-muted-foreground">
+                JPG, PNG, WebP o GIF, hasta 5 MB.
+              </p>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-4">
+            <div className="flex flex-[3_1_12rem] flex-col gap-1.5">
               <Label htmlFor="name">Nombre</Label>
-              <Input id="name" placeholder="Bicicleta de montaña" {...register("name")} />
+              <Input
+                id="name"
+                placeholder="Bicicleta de montaña"
+                aria-invalid={!!errors.name}
+                {...register("name")}
+              />
               {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
             </div>
-
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-[1_1_7rem] flex-col gap-1.5">
               <Label htmlFor="price">Precio (€)</Label>
               <Input
                 id="price"
                 type="number"
                 step="0.01"
                 min="0"
-                placeholder="150.00"
+                placeholder="150"
+                aria-invalid={!!errors.price}
                 {...register("price", { valueAsNumber: true })}
               />
               {errors.price && <p className="text-sm text-destructive">{errors.price.message}</p>}
             </div>
+          </div>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="image-file">Imagen</Label>
-              {previewUrl && (
-                <img
-                  src={previewUrl}
-                  alt="Vista previa"
-                  className="h-32 w-full rounded-md object-cover"
-                />
-              )}
-              <Input
-                id="image-file"
-                type="file"
-                accept={ALLOWED_EXTENSIONS.join(",")}
-                onChange={handleFileChange}
-              />
-              {fileError && <p className="text-sm text-destructive">{fileError}</p>}
-              <p className="text-xs text-muted-foreground">
-                Sube una imagen (máx. 5 MB) o deja vacío.
-              </p>
-            </div>
+          <fieldset className="flex flex-col gap-2">
+            <legend className="text-sm leading-none font-medium">Tags (máximo {MAX_TAGS})</legend>
+            {allTags.length > 0 && (
+              <div className="mt-1 flex flex-wrap gap-2">
+                {allTags.map((tag) => (
+                  <TagChip
+                    key={tag}
+                    label={tag}
+                    size="sm"
+                    selected={selectedTags.includes(tag)}
+                    onClick={() => toggleTag(tag)}
+                  />
+                ))}
+              </div>
+            )}
+            <Label htmlFor="new-tag" className="mt-1">
+              Añadir un tag nuevo
+            </Label>
+            <Input
+              id="new-tag"
+              maxLength={50}
+              placeholder="Escribe y pulsa Enter"
+              disabled={tagLimitReached}
+              value={newTag}
+              onChange={(e) => setNewTag(e.target.value)}
+              onKeyDown={handleNewTagKeyDown}
+            />
+          </fieldset>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="tags">Tags (separados por coma)</Label>
-              <Input id="tags" placeholder="bikes, mountain" {...register("tags")} />
-              {errors.tags && <p className="text-sm text-destructive">{errors.tags.message}</p>}
-              {(tagsQuery.data ?? []).length > 0 && (
-                <div className="flex flex-wrap gap-1">
-                  {(tagsQuery.data ?? []).map((tag) => {
-                    const selected = parseTags(tagsValue).includes(tag.name);
-                    return (
-                      <button
-                        key={tag.id ?? tag.name}
-                        type="button"
-                        onClick={() => toggleTag(tag.name)}
-                        className={[
-                          "rounded-full px-2 py-0.5 text-xs transition-colors",
-                          selected
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-                        ].join(" ")}
-                      >
-                        {tag.name}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+          {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
 
-            {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
-
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={onClose}>
-                Cancelar
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Guardando..." : "Guardar"}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Guardando..." : "Guardar"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

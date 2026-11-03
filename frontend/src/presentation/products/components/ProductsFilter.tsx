@@ -1,6 +1,6 @@
 import { useTags } from "@/presentation/tags/hooks/useTags";
+import { TagChip } from "@/presentation/components/TagChip";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -26,8 +26,7 @@ interface ProductsFilterProps {
 export function ProductsFilter({ values, onChange }: ProductsFilterProps) {
   const tagsQuery = useTags();
 
-  const set = (patch: Partial<ProductsFilterValues>) =>
-    onChange({ ...values, ...patch });
+  const set = (patch: Partial<ProductsFilterValues>) => onChange({ ...values, ...patch });
 
   const toggleTag = (name: string) => {
     set({
@@ -43,84 +42,74 @@ export function ProductsFilter({ values, onChange }: ProductsFilterProps) {
     values.priceMax !== "" ||
     values.tags.length > 0;
 
+  const tags = tagsQuery.data ?? [];
+
   return (
-    <Card className="mt-4">
-      <CardContent className="flex flex-col gap-4">
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="filter-name">Nombre</Label>
-            <Input
-              id="filter-name"
-              placeholder="Buscar por nombre..."
-              value={values.name}
-              onChange={(e) => set({ name: e.target.value })}
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="filter-price-min">Precio mínimo (€)</Label>
-            <Input
-              id="filter-price-min"
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="0"
-              value={values.priceMin}
-              onChange={(e) => set({ priceMin: e.target.value })}
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="filter-price-max">Precio máximo (€)</Label>
-            <Input
-              id="filter-price-max"
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="Sin límite"
-              value={values.priceMax}
-              onChange={(e) => set({ priceMax: e.target.value })}
-            />
-          </div>
+    <div className="mt-6 flex flex-col gap-3 rounded-2xl bg-card p-4">
+      <div className="flex flex-wrap gap-3">
+        <div className="flex flex-[3_1_16rem] flex-col gap-1.5">
+          <Label htmlFor="filter-name">Nombre</Label>
+          <Input
+            id="filter-name"
+            type="search"
+            placeholder="Buscar en mis productos"
+            value={values.name}
+            onChange={(e) => set({ name: e.target.value })}
+          />
         </div>
+        <div className="flex flex-[1_1_8rem] flex-col gap-1.5">
+          <Label htmlFor="filter-price-min">Precio mínimo</Label>
+          <Input
+            id="filter-price-min"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="0 €"
+            value={values.priceMin}
+            onChange={(e) => set({ priceMin: e.target.value })}
+          />
+        </div>
+        <div className="flex flex-[1_1_8rem] flex-col gap-1.5">
+          <Label htmlFor="filter-price-max">Precio máximo</Label>
+          <Input
+            id="filter-price-max"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="Sin límite"
+            value={values.priceMax}
+            onChange={(e) => set({ priceMax: e.target.value })}
+          />
+        </div>
+      </div>
 
-        {(tagsQuery.data ?? []).length > 0 && (
-          <div className="flex flex-col gap-2">
-            <Label>Tags</Label>
-            <div className="flex flex-wrap gap-1">
-              {(tagsQuery.data ?? []).map((tag) => {
-                const selected = values.tags.includes(tag.name);
-                return (
-                  <button
-                    key={tag.id ?? tag.name}
-                    type="button"
-                    onClick={() => toggleTag(tag.name)}
-                    className={[
-                      "rounded-full px-3 py-1 text-xs transition-colors",
-                      selected
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-                    ].join(" ")}
-                  >
-                    {tag.name}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {isDirty && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="self-start"
-            onClick={() => onChange(EMPTY_PRODUCTS_FILTER)}
-          >
-            Limpiar filtros
-          </Button>
-        )}
-      </CardContent>
-    </Card>
+      {(tags.length > 0 || isDirty) && (
+        <div
+          role="group"
+          aria-label="Filtrar por tag"
+          className="flex flex-wrap items-center gap-2"
+        >
+          {tags.map((tag) => (
+            <TagChip
+              key={tag.id ?? tag.name}
+              label={tag.name}
+              size="sm"
+              selected={values.tags.includes(tag.name)}
+              onClick={() => toggleTag(tag.name)}
+            />
+          ))}
+          {isDirty && (
+            <Button
+              variant="link"
+              size="sm"
+              className="ml-auto"
+              onClick={() => onChange(EMPTY_PRODUCTS_FILTER)}
+            >
+              Limpiar filtros
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

@@ -1,9 +1,10 @@
+import { AuthLayout } from "@/presentation/auth/AuthLayout";
 import { Login } from "@/presentation/auth/Login";
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <AuthLayout>
       <Login />
-    </div>
+    </AuthLayout>
   );
 }
