@@ -7,8 +7,9 @@ export class UpdateTagController {
     async execute(req:Request,res:Response,next:NextFunction) {
         try {
             const tag = await this.handler.execute({
-                id: Number(req.params.id),
                 ...req.body,
+                id: Number(req.params.id),
+                requesterId: Number(req.user?.sub),
             });
             res.status(200).json(tag);
         } catch (error) {

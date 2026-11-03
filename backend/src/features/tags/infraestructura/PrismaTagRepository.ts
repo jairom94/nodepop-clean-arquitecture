@@ -33,6 +33,12 @@ export class PrismaTagRepository implements ITagRepository {
         });
         return PrismaTagMapper.toDomain(updated);
     }
+    async isUsedByOtherOwners(id: number, ownerId: number): Promise<boolean> {
+        const count = await databaseClient.db.product.count({
+            where:{ ownerId:{ not: ownerId }, tags:{ some:{ id } } },
+        });
+        return count > 0;
+    }
     async delete(id: number): Promise<void> {
         await databaseClient.db.tag.delete({
             where:{ id },

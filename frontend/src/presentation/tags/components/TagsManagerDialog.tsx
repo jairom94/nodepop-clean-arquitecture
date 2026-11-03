@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
+import { isAxiosError } from "axios";
 import { toast } from "sonner";
 import type { TagDto } from "@/application/tags/schemas/TagSchema";
 import { useTags } from "@/presentation/tags/hooks/useTags";
@@ -11,6 +12,13 @@ import { useDialogLifecycle } from "@/presentation/components/useDialogLifecycle
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+
+/** El backend responde 403 si el tag lo usan productos de otros usuarios. */
+const SHARED_TAG_MESSAGE = "Este tag lo usan productos de otros usuarios y no se puede cambiar";
+
+function isSharedTagError(error: unknown): boolean {
+  return isAxiosError(error) && error.response?.status === 403;
+}
 
 interface TagsManagerDialogProps {
   onClose: () => void;
@@ -47,16 +55,20 @@ export function TagsManagerDialog({ onClose }: TagsManagerDialogProps) {
     try {
       await updateTag.mutateAsync({ id, name });
       setEditingId(null);
-    } catch {
-      toast.error("No se pudo renombrar el tag (¿nombre duplicado?)");
+    } catch (error) {
+      toast.error(
+        isSharedTagError(error)
+          ? SHARED_TAG_MESSAGE
+          : "No se pudo renombrar el tag (¿nombre duplicado?)",
+      );
     }
   };
 
   const handleDelete = async (id: number) => {
     try {
       await deleteTag.mutateAsync(id);
-    } catch {
-      toast.error("No se pudo eliminar el tag");
+    } catch (error) {
+      toast.error(isSharedTagError(error) ? SHARED_TAG_MESSAGE : "No se pudo eliminar el tag");
     } finally {
       setConfirmOpen(false);
     }

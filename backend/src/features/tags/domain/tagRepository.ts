@@ -7,4 +7,6 @@ export interface ITagRepository {
      findByName(name:string):Promise<Tag|null>;
      update(id:number, data:{name:string}):Promise<Tag>;
      delete(id:number):Promise<void>;
+     /** true si algún producto de otro usuario usa el tag. */
+     isUsedByOtherOwners(id:number, ownerId:number):Promise<boolean>;
 }

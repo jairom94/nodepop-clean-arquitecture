@@ -3,6 +3,7 @@ import { PrismaTagMapper } from "../infraestructura/PrismaTagMapper.js";
 import { UpdateTagCommand } from "./updateTagCommand.js";
 import { TagNotFoundError } from "./errors/TagNotFound.js";
 import { TagAlreadyExistsError } from "../create/errors/TagAlreadyExists.js";
+import { ForbiddenError } from "../../../shared/errors/ForbiddenError.js";
 
 interface TagResponse {
   id: number|null;
@@ -22,6 +23,11 @@ export class UpdateTagHandler {
         const tag = await this.tagRepository.findById(command.id);
         if (!tag) {
             throw new TagNotFoundError(command.id);
+        }
+
+        // Los tags son compartidos: no se puede alterar uno del que dependen productos ajenos
+        if (await this.tagRepository.isUsedByOtherOwners(command.id, command.requesterId)) {
+            throw new ForbiddenError("This tag is used by other users' products");
         }
 
         if (command.name !== tag.name) {
