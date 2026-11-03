@@ -15,5 +15,8 @@ export const createUserSchema = z.object({
     password: z
     .string()
     .min(6, { message: "Password must be at least 6 characters" })
-    .max(100, { message: "Password must be less than 100 characters" }),
+    // bcrypt ignora lo que pasa de 72 bytes: más larga daría una falsa sensación de seguridad
+    .refine((value) => Buffer.byteLength(value, "utf8") <= 72, {
+        message: "Password must be at most 72 bytes",
+    }),
 })
