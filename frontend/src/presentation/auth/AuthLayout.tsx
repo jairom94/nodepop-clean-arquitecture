@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export function AuthLayout({ children }: { children: ReactNode }) {
   return (
@@ -7,9 +8,9 @@ export function AuthLayout({ children }: { children: ReactNode }) {
       <Link
         viewTransition
         to="/"
-        className="font-heading text-4xl font-extrabold tracking-tight text-brand-foreground"
+        className="rounded-lg focus-visible:ring-3 focus-visible:ring-brand-foreground/60 focus-visible:outline-none"
       >
-        nodepop
+        <BrandLogo height={104} priority />
       </Link>
       {children}
     </div>

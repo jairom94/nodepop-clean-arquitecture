@@ -19,4 +19,13 @@ export default tseslint.config(
       },
     },
   },
+  {
+    // Scripts de mantenimiento que se ejecutan con Node
+    files: ["scripts/**/*.mjs"],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
 );

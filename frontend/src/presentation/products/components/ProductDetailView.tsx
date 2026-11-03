@@ -53,8 +53,8 @@ export function ProductDetailView({
 
         <div className="flex min-w-0 flex-[2_1_18rem] flex-col gap-5">
           <div>
-            <h1 className="font-display text-5xl leading-[0.95] lg:text-6xl">{name}</h1>
-            <PriceTag price={price} className="mt-4 rounded-xl px-4 py-1 text-3xl" />
+            <h1 className="font-display text-5xl leading-[0.95] lg:text-6xl text-retro">{name}</h1>
+            <PriceTag price={price} className="mt-4 text-3xl" />
           </div>
 
           {tags.length > 0 && (

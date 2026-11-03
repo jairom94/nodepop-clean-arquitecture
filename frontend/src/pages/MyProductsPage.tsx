@@ -113,7 +113,7 @@ export default function MyProductsPage() {
     <PageContainer>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-5xl leading-none">Mis productos</h1>
+          <h1 className="font-display text-5xl leading-none text-retro">Mis productos</h1>
           {products && (
             <p className="text-muted-foreground">
               {filteredItems.length} de {products.length} productos

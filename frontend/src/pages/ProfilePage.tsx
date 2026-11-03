@@ -34,7 +34,7 @@ export default function ProfilePage() {
           />
         )}
         <div className="min-w-0">
-          <h1 className="font-display text-5xl leading-none">Mi perfil</h1>
+          <h1 className="font-display text-5xl leading-none text-retro">Mi perfil</h1>
           <p className="text-muted-foreground">Actualiza tu información personal</p>
         </div>
       </div>

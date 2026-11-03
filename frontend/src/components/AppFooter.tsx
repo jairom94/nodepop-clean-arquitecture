@@ -1,6 +1,7 @@
 import type { FormEvent, ReactNode } from "react";
 import { Link } from "react-router";
 import { toast } from "sonner";
+import { BrandLogo } from "@/components/BrandLogo";
 import { cn } from "@/lib/utils";
 
 const REPOSITORY_URL = "https://github.com/jairom94/nodepop-clean-arquitecture";
@@ -100,7 +101,7 @@ export function AppFooter() {
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
         {/* Llamada a la acción */}
         <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-4 border-b border-brand-foreground/20 py-10">
-          <p className="max-w-xl font-display text-4xl leading-none sm:text-5xl">
+          <p className="max-w-xl font-display text-4xl leading-none sm:text-5xl text-retro">
             ¿Tienes algo que ya no usas? Ponle precio y publícalo.
           </p>
           <Link
@@ -118,9 +119,9 @@ export function AppFooter() {
             <Link
               viewTransition
               to="/"
-              className="self-start font-heading text-3xl font-extrabold tracking-tight"
+              className="self-start rounded-lg focus-visible:ring-3 focus-visible:ring-brand-foreground/60 focus-visible:outline-none"
             >
-              nodepop
+              <BrandLogo height={80} />
             </Link>
             <p className="max-w-xs text-brand-foreground/80">
               Compra y vende productos de segunda mano cerca de ti.

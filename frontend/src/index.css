@@ -47,64 +47,71 @@
 }
 
 :root {
-    --background: #f6f7fb;
-    --foreground: #14171f;
-    --card: #ffffff;
-    --card-foreground: #14171f;
-    --popover: #ffffff;
-    --popover-foreground: #14171f;
-    --primary: #1d3fd1;
+    /* Paleta tomada del logo: etiqueta kraft, contornos café y furgoneta óxido */
+    --background: #faf3e6;
+    --foreground: #3a2414;
+    --card: #fffbf4;
+    --card-foreground: #3a2414;
+    --popover: #fffbf4;
+    --popover-foreground: #3a2414;
+    --primary: #a8432b;
     --primary-foreground: #ffffff;
-    --secondary: #f0f2f8;
-    --secondary-foreground: #14171f;
-    --muted: #f0f2f8;
-    --muted-foreground: #565c6b;
-    --accent: #dce4ff;
-    --accent-foreground: #14171f;
-    --destructive: #b3261e;
+    --secondary: #f2e7d3;
+    --secondary-foreground: #3a2414;
+    --muted: #f2e7d3;
+    --muted-foreground: #6b5241;
+    --accent: #f1d9c0;
+    --accent-foreground: #3a2414;
+    --destructive: #8c1d3f;
     --destructive-foreground: #ffffff;
-    --success: #17542f;
-    --border: #e2e5ee;
-    --input: #d5d9e5;
-    --ring: #1d3fd1;
+    --success: #2f5a2a;
+    --border: #e6d6bb;
+    --input: #957c5b;
+    --ring: #a8432b;
     --radius: 0.75rem;
 
     /* Marca: no cambian con el tema */
-    --brand: #1d3fd1;
-    --brand-foreground: #ffffff;
-    --price: #ffd84d;
-    --price-foreground: #14171f;
+    --brand: #3a2414;
+    --brand-foreground: #f7e9cc;
+    --price: #f7e3ba;
+    --price-foreground: #3a2414;
 
     /* Fondos de producto sin foto */
-    --tint-1: #dce4ff;
-    --tint-2: #ffe9b8;
-    --tint-3: #e3e6ee;
+    --tint-1: #f1d9c0;
+    --tint-2: #e9dcc2;
+    --tint-3: #efcfc2;
+
+    /* Vintage: relieve de los titulares y grano de papel */
+    --retro-shadow: #d27a55;
+    --grain-opacity: 0.08;
 }
 
 .dark {
-    --background: #0f121c;
-    --foreground: #eef0f6;
-    --card: #181c29;
-    --card-foreground: #eef0f6;
-    --popover: #181c29;
-    --popover-foreground: #eef0f6;
-    --primary: #a9bbff;
-    --primary-foreground: #0f121c;
-    --secondary: #232838;
-    --secondary-foreground: #eef0f6;
-    --muted: #232838;
-    --muted-foreground: #a3a9b8;
-    --accent: #26325f;
-    --accent-foreground: #eef0f6;
-    --destructive: #ff8a80;
-    --destructive-foreground: #0f121c;
-    --success: #7fd9a0;
-    --border: #2a3042;
-    --input: #3a4156;
-    --ring: #a9bbff;
-    --tint-1: #26325f;
-    --tint-2: #4a3c17;
-    --tint-3: #2a3042;
+    --background: #1c130c;
+    --foreground: #f3e5cc;
+    --card: #271b12;
+    --card-foreground: #f3e5cc;
+    --popover: #271b12;
+    --popover-foreground: #f3e5cc;
+    --primary: #e58a66;
+    --primary-foreground: #1c130c;
+    --secondary: #33251a;
+    --secondary-foreground: #f3e5cc;
+    --muted: #33251a;
+    --muted-foreground: #c3ae90;
+    --accent: #43291f;
+    --accent-foreground: #f3e5cc;
+    --destructive: #f28ba8;
+    --destructive-foreground: #1c130c;
+    --success: #9fd48f;
+    --border: #3d2b1e;
+    --input: #8a6f54;
+    --ring: #e58a66;
+    --tint-1: #3a2a1c;
+    --tint-2: #43291f;
+    --tint-3: #353022;
+    --retro-shadow: #7a3524;
+    --grain-opacity: 0.05;
 }
 
 /* Rótulo: Bricolage condensada, como los letreros de un mercadillo */
@@ -115,7 +122,35 @@
     letter-spacing: -0.01em;
 }
 
-/* Pegatina de precio del hero: se "pega" una vez al cargar */
+/* Relieve de los titulares, como las letras en 3D del logo */
+@utility text-retro {
+    text-shadow: 0.05em 0.05em 0 var(--retro-shadow);
+}
+
+/* Etiqueta de precio con la forma de la del logo.
+   El contorno se dibuja con drop-shadow porque clip-path recorta los bordes. */
+.price-tag {
+    display: inline-block;
+    line-height: 1.25;
+    filter: drop-shadow(0.09rem 0 0 var(--price-foreground))
+        drop-shadow(-0.09rem 0 0 var(--price-foreground))
+        drop-shadow(0 0.09rem 0 var(--price-foreground))
+        drop-shadow(0 -0.09rem 0 var(--price-foreground));
+}
+
+.price-tag-body {
+    --notch: 0.42em;
+    display: block;
+    padding: 0.12em 0.5em 0.12em 1.05em;
+    border-radius: 0 0.22em 0.22em 0;
+    background: var(--price);
+    color: var(--price-foreground);
+    clip-path: polygon(var(--notch) 0, 100% 0, 100% 100%, var(--notch) 100%, 0 calc(100% - var(--notch)), 0 var(--notch));
+    /* Agujero del cordel */
+    mask: radial-gradient(circle at 0.5em 50%, transparent 0.13em, #000 0.15em);
+}
+
+/* Etiquetas del hero: giradas y "pegadas" una vez al cargar */
 @keyframes sticker-in {
     from {
         opacity: 0;
@@ -125,7 +160,6 @@
 
 .price-sticker {
     transform: rotate(var(--sticker-rotate, 0deg));
-    box-shadow: 0 2px 0 rgb(20 23 31 / 0.18);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -133,6 +167,22 @@
         animation: sticker-in 360ms cubic-bezier(0.3, 1.4, 0.5, 1) both;
         animation-delay: var(--sticker-delay, 0ms);
     }
+}
+
+/* Grano de papel sobre toda la página; no captura clics */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    opacity: var(--grain-opacity);
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.23 0 0 0 0 0.14 0 0 0 0 0.08 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.dark body::after {
+    mix-blend-mode: screen;
 }
 
 @layer base {

@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from "react-router";
 import { Menu, Moon, Plus, Sun, User, X } from "lucide-react";
 import { useIsAuthenticated, useUser } from "@/store/auth/auth-selectors";
 import { useThemeStore } from "@/store/theme/theme-store";
+import { BrandLogo } from "@/components/BrandLogo";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CatalogSearch } from "@/presentation/catalog/components/CatalogSearch";
@@ -40,9 +41,9 @@ export function AppHeader() {
         <Link
           viewTransition
           to="/"
-          className="font-heading text-[1.625rem] font-extrabold tracking-tight text-primary"
+          className="shrink-0 rounded-lg focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
         >
-          nodepop
+          <BrandLogo height={48} priority />
         </Link>
 
         {pathname.startsWith("/products") && (

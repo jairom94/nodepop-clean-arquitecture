@@ -38,7 +38,7 @@ export function ProductRow({ product, onEdit, onDelete }: ProductRowProps) {
         </h2>
         <p className="truncate text-sm text-muted-foreground">{tags.join(", ")}</p>
       </div>
-      <PriceTag price={product.price} className="rounded-lg px-2.5 text-lg" />
+      <PriceTag price={product.price} className="text-lg" />
       <div className="flex gap-1">
         <Button
           variant="secondary"
