@@ -35,5 +35,7 @@ export const ENVIRONMENTS = {
      jwtRefreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
      // Sin MODE explícito se asume producción: nunca se envían trazas por omisión
      mode: process.env.MODE || 'production',
-     corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173'
+     corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+     // Demo pública de solo lectura: la bóveda corta registros y escrituras
+     demoMode: process.env.DEMO_MODE === 'true',
 } as const;

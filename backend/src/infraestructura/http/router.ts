@@ -16,10 +16,27 @@ import { createUpdateTagRouter } from "../../features/tags/update/updateTagRoute
 import { createDeleteTagRouter } from "../../features/tags/delete/deleteTagRoute.js";
 import { authGuard } from "./middleware/AuthGuard.js";
 import { rateLimitPresets } from "./middleware/RateLimit.js";
+import { vault } from "./middleware/Vault.js";
+import { ENVIRONMENTS } from "../../config/environments.js";
 import { JwtTokenService } from "../security/JwtTokenService.js";
 import { PrismaTokenRepository } from "../../features/auth/infraestructura/PrismaTokenRepository.js";
 
 const router = Router();
+
+// Modo demo (DEMO_MODE=true): solo lectura.
+// Pasan las lecturas y lo imprescindible para la sesión; registro y escrituras se cortan.
+// Va antes que todo: no consume rate limit ni carga subidas de imágenes en memoria.
+const READ_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
+const DEMO_SESSION_ROUTES = new Set(["/auth/login", "/auth/refresh", "/auth/logout"]);
+
+router.use(
+  vault({
+    enabled: ENVIRONMENTS.demoMode,
+    message: "Esta demo es de solo lectura: no se pueden crear, editar ni borrar datos",
+    allow: (req) =>
+      READ_METHODS.has(req.method) || DEMO_SESSION_ROUTES.has(req.path.replace(/\/+$/, "")),
+  }),
+);
 
 
 // Rutas publicas
