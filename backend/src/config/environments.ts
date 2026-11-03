@@ -27,6 +27,7 @@ if (jwtSecret === jwtRefreshSecret) {
 }
 
 export const ENVIRONMENTS = {
+     port: Number(process.env.PORT) || 3005,
      databaseUrl: process.env.DATABASE_URL || '',
      jwtSecret,
      jwtRefreshSecret,

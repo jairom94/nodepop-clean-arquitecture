@@ -44,8 +44,10 @@ app.get('/health', (req, res) => {
 
 app.use(apiVersion,apiRouter);
 
-// Documentación de la API
-app.use('/api-doc', createSwaggerRouter());
+// Documentación de la API: solo en desarrollo, en producción no se expone el mapa de la API
+if (ENVIRONMENTS.mode === "development") {
+  app.use('/api-doc', createSwaggerRouter());
+}
 
 //404
 app.use((req: Request, res: Response, next: NextFunction) => {
