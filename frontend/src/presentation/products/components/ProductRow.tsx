@@ -36,7 +36,7 @@ export function ProductRow({ product, onEdit, onDelete }: ProductRowProps) {
             {product.name}
           </Link>
         </h2>
-        <p className="truncate text-sm text-muted-foreground">{tags.join(" · ")}</p>
+        <p className="truncate text-sm text-muted-foreground">{tags.join(", ")}</p>
       </div>
       <PriceTag price={product.price} className="rounded-lg px-2.5 text-lg" />
       <div className="flex gap-1">

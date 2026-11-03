@@ -88,7 +88,7 @@ export default function ProductDetailPage() {
         backLabel="Volver a mis productos"
       >
         <div className="rounded-2xl bg-card p-5">
-          <p className="mb-3 font-semibold">Este anuncio es tuyo</p>
+          <p className="mb-3 font-semibold">Este producto es tuyo</p>
           <div className="flex flex-wrap gap-2">
             <Button className="flex-[1_1_8rem]" onClick={() => setEditing(true)}>
               Editar
@@ -110,7 +110,7 @@ export default function ProductDetailPage() {
           onClose={() => setEditing(false)}
           onSubmit={async ({ file, ...changes }) => {
             await updateProduct.mutateAsync({ id: productId, changes, file });
-            toast("Producto actualizado");
+            toast("Cambios guardados");
           }}
         />
       )}

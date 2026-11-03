@@ -1,6 +1,5 @@
 import type { FormEvent, ReactNode } from "react";
 import { Link } from "react-router";
-import { ArrowRight, Heart } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -32,7 +31,7 @@ const columns: { title: string; items: FooterItem[] }[] = [
   {
     title: "Tu cuenta",
     items: [
-      { label: "Publicar un anuncio", to: "/my-products?new=1" },
+      { label: "Publicar producto", to: "/my-products?new=1" },
       { label: "Mis productos", to: "/my-products" },
       { label: "Mi perfil", to: "/profile" },
       { label: "Crear cuenta", to: "/register" },
@@ -101,16 +100,15 @@ export function AppFooter() {
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
         {/* Llamada a la acción */}
         <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-4 border-b border-brand-foreground/20 py-10">
-          <p className="max-w-xl font-heading text-3xl leading-tight font-extrabold tracking-tight sm:text-4xl">
-            ¿Tienes algo que ya no usas? Dale una segunda vida.
+          <p className="max-w-xl font-display text-4xl leading-none sm:text-5xl">
+            ¿Tienes algo que ya no usas? Ponle precio y publícalo.
           </p>
           <Link
             viewTransition
             to="/my-products?new=1"
             className="inline-flex h-12 items-center gap-2 rounded-full bg-price px-6 font-semibold text-price-foreground transition-opacity hover:opacity-90 focus-visible:ring-3 focus-visible:ring-brand-foreground/60 focus-visible:outline-none"
           >
-            Publicar un anuncio
-            <ArrowRight className="size-4" aria-hidden="true" />
+            Publicar producto
           </Link>
         </div>
 
@@ -125,8 +123,7 @@ export function AppFooter() {
               nodepop
             </Link>
             <p className="max-w-xs text-brand-foreground/80">
-              Compra y vende productos de segunda mano cerca de ti. Lo que a otros les sobra, a ti
-              te viene bien.
+              Compra y vende productos de segunda mano cerca de ti.
             </p>
             <form onSubmit={handleSubscribe} className="mt-2 flex max-w-sm flex-col gap-2">
               <label htmlFor="newsletter-email" className="text-sm font-semibold">
@@ -164,15 +161,8 @@ export function AppFooter() {
         {/* Pie legal */}
         <div className="flex flex-col gap-4 border-t border-brand-foreground/20 py-6 text-sm text-brand-foreground/80 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-col gap-1">
-            <p>© {year} nodepop · Proyecto de portfolio con productos de ejemplo</p>
-            <p>
-              Hecho con{" "}
-              <Heart
-                className="inline size-3.5 fill-price align-[-2px] text-price"
-                aria-label="cariño"
-              />{" "}
-              usando React, TanStack Query, Tailwind CSS y Base UI
-            </p>
+            <p>© {year} nodepop. Proyecto de portfolio con productos de ejemplo.</p>
+            <p>Construido con React, TanStack Query, Tailwind CSS y Base UI.</p>
           </div>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
             {legalItems.map((label) => (

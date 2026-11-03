@@ -14,7 +14,7 @@ interface ProductDetailViewProps {
   sellerName: string;
   backTo: string;
   backLabel: string;
-  /** Acciones disponibles para quien ve el anuncio. */
+  /** Acciones disponibles para quien ve el producto. */
   children: ReactNode;
 }
 
@@ -53,9 +53,7 @@ export function ProductDetailView({
 
         <div className="flex min-w-0 flex-[2_1_18rem] flex-col gap-5">
           <div>
-            <h1 className="font-heading text-4xl leading-tight font-extrabold tracking-tight lg:text-5xl">
-              {name}
-            </h1>
+            <h1 className="font-display text-5xl leading-[0.95] lg:text-6xl">{name}</h1>
             <PriceTag price={price} className="mt-4 rounded-xl px-4 py-1 text-3xl" />
           </div>
 

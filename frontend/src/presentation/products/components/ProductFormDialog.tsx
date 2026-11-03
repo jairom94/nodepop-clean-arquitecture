@@ -121,7 +121,7 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
     <Dialog open onOpenChange={(next) => !next && onClose()}>
       <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{product ? "Editar producto" : "Nuevo producto"}</DialogTitle>
+          <DialogTitle>{product ? "Editar producto" : "Publicar producto"}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(submit)} className="flex flex-col gap-4">
@@ -216,7 +216,13 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
               Cancelar
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Guardando..." : "Guardar"}
+              {product
+                ? isSubmitting
+                  ? "Guardando..."
+                  : "Guardar cambios"
+                : isSubmitting
+                  ? "Publicando..."
+                  : "Publicar"}
             </Button>
           </DialogFooter>
         </form>

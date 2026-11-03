@@ -50,7 +50,7 @@ export function Login() {
         <CardTitle className="font-heading text-3xl leading-tight font-extrabold tracking-tight">
           Iniciar sesión
         </CardTitle>
-        <CardDescription>Entra para gestionar tus anuncios</CardDescription>
+        <CardDescription>Entra para gestionar tus productos</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">

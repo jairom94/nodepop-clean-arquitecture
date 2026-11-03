@@ -67,7 +67,7 @@ export function AppHeader() {
             className={buttonVariants({ className: "px-3.5 sm:mx-1 sm:px-5" })}
           >
             <Plus className="size-4" aria-hidden="true" />
-            Vender
+            Publicar
           </Link>
 
           <Button variant="ghost" size="icon" aria-label={themeLabel} onClick={toggleTheme}>

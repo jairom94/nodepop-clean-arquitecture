@@ -6,7 +6,7 @@ export default function NotFoundPage() {
   return (
     <PageContainer>
       <section className="flex flex-col items-center rounded-3xl bg-card px-6 py-14 text-center">
-        <p className="rounded-2xl bg-price px-6 py-2 font-heading text-7xl leading-none font-extrabold text-price-foreground sm:text-8xl">
+        <p className="rounded-2xl bg-price px-6 py-2 font-display text-7xl leading-none text-price-foreground sm:text-8xl">
           404
         </p>
         <h1 className="mt-5 font-heading text-3xl leading-tight font-extrabold tracking-tight">

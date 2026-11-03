@@ -45,7 +45,7 @@ export default function MyProductsPage() {
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
 
-  // "Vender" enlaza aquí con ?new=1 desde cualquier página.
+  // "Publicar" enlaza aquí con ?new=1 desde cualquier página.
   const showCreate = creating || params.has("new");
 
   const filteredItems = useMemo(() => {
@@ -88,7 +88,7 @@ export default function MyProductsPage() {
 
   const handleUpdate = async (id: number, { file, ...changes }: ProductFormResult) => {
     await updateProduct.mutateAsync({ id, changes, file });
-    toast("Producto actualizado");
+    toast("Cambios guardados");
   };
 
   const handleDelete = async (id: number) => {
@@ -113,9 +113,7 @@ export default function MyProductsPage() {
     <PageContainer>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-heading text-4xl leading-tight font-extrabold tracking-tight">
-            Mis productos
-          </h1>
+          <h1 className="font-display text-5xl leading-none">Mis productos</h1>
           {products && (
             <p className="text-muted-foreground">
               {filteredItems.length} de {products.length} productos
@@ -126,7 +124,7 @@ export default function MyProductsPage() {
           <Button variant="outline" onClick={() => setTagsOpen(true)}>
             Gestionar tags
           </Button>
-          <Button onClick={() => setCreating(true)}>Nuevo producto</Button>
+          <Button onClick={() => setCreating(true)}>Publicar producto</Button>
         </div>
       </div>
 
@@ -167,7 +165,7 @@ export default function MyProductsPage() {
                 Limpiar filtros
               </Button>
             ) : (
-              <Button onClick={() => setCreating(true)}>Nuevo producto</Button>
+              <Button onClick={() => setCreating(true)}>Publicar producto</Button>
             )
           }
         />

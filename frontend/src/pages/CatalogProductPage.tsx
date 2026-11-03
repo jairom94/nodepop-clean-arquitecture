@@ -44,7 +44,7 @@ export default function CatalogProductPage() {
     return (
       <PageContainer>
         <StateMessage
-          title="Este anuncio ya no está aquí"
+          title="Este producto ya no está disponible"
           description="Puede que se haya retirado o que la dirección no sea correcta."
           action={
             <Link viewTransition to="/products" className={buttonVariants()}>

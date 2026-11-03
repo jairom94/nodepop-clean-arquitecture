@@ -22,14 +22,14 @@ function CatalogCard({ product }: { product: CatalogProduct }) {
           tags={tags}
           seed={product.id}
           className={cn(
-            "aspect-4/3 w-full rounded-2xl transition-opacity group-hover:opacity-85",
+            "aspect-4/3 w-full rounded-2xl",
             isTransitioning && "[view-transition-name:product-image]",
           )}
         />
         <PriceTag price={product.price} className="absolute bottom-3 left-3" />
       </div>
       <h3 className="mt-3 font-semibold group-hover:underline">{product.name}</h3>
-      <p className="text-sm text-muted-foreground">{tags.join(" · ")}</p>
+      <p className="text-sm text-muted-foreground">{tags.join(", ")}</p>
     </Link>
   );
 }

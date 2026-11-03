@@ -61,10 +61,11 @@ export default function CatalogPage() {
   return (
     <PageContainer>
       <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
-        <h1 className="max-w-[14em] font-heading text-4xl leading-none font-extrabold tracking-tight lg:text-6xl">
-          Lo que a otros les sobra, a ti te viene bien.
-        </h1>
-        <p className="text-muted-foreground">Productos de ejemplo, ordenados por recientes</p>
+        <h1 className="font-display text-6xl leading-none lg:text-7xl">Productos</h1>
+        <p className="text-muted-foreground">
+          {products ? `${products.length} productos de ejemplo, ` : ""}del más reciente al más
+          antiguo
+        </p>
       </div>
 
       {tagNames.length > 0 && (
