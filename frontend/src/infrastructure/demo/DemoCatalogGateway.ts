@@ -1,5 +1,21 @@
 import type { CatalogGateway, CatalogProduct } from "@/application/ports/CatalogGateway";
 
+const PICSUM_IDS = 50;
+
+/**
+ * Ids de Picsum (1–50) barajadas una vez por carga de la página: cada producto
+ * recibe una foto aleatoria sin repetir y la conserva en tarjeta y detalle.
+ */
+const photoIds = Array.from({ length: PICSUM_IDS }, (_, i) => i + 1)
+  .map((id) => ({ id, order: Math.random() }))
+  .sort((a, b) => a.order - b.order)
+  .map(({ id }) => id);
+
+/** Foto de ejemplo de Picsum; no tiene relación con el producto. */
+function demoPhoto(productId: number): string {
+  return `https://picsum.photos/id/${photoIds[(productId - 1) % PICSUM_IDS]}/600/400`;
+}
+
 function demoProduct(
   id: number,
   name: string,
@@ -13,7 +29,7 @@ function demoProduct(
     price,
     sellerName,
     ownerId: 0,
-    image: null,
+    image: demoPhoto(id),
     tags: tagNames.map((tagName) => ({ id: null, name: tagName })),
   };
 }

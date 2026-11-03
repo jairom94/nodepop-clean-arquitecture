@@ -28,11 +28,20 @@ interface ProductImageProps {
   tags: string[];
   /** Elige el color de fondo cuando no hay foto, para que no varíe entre visitas. */
   seed: number;
+  /** "eager" cuando la foto entra en pantalla sin que se haga scroll (el hero en movimiento). */
+  loading?: "lazy" | "eager";
   className?: string;
 }
 
 /** Foto del producto o, si no hay o no carga, un fondo de color con icono. */
-export function ProductImage({ src, name, tags, seed, className }: ProductImageProps) {
+export function ProductImage({
+  src,
+  name,
+  tags,
+  seed,
+  loading = "lazy",
+  className,
+}: ProductImageProps) {
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
   if (src && src !== failedSrc) {
@@ -40,7 +49,7 @@ export function ProductImage({ src, name, tags, seed, className }: ProductImageP
       <img
         src={src}
         alt={name}
-        loading="lazy"
+        loading={loading}
         onError={() => setFailedSrc(src)}
         className={cn("object-cover", className)}
       />

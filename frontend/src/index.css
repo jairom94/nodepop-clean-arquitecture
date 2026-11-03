@@ -150,22 +150,65 @@
     mask: radial-gradient(circle at 0.5em 50%, transparent 0.13em, #000 0.15em);
 }
 
-/* Etiquetas del hero: giradas y "pegadas" una vez al cargar */
-@keyframes sticker-in {
-    from {
-        opacity: 0;
-        transform: rotate(var(--sticker-rotate, 0deg)) scale(1.4) translateY(-0.5rem);
+/* Hero: columnas de productos en bucle; la primera y la tercera bajan, la del centro sube */
+@keyframes hero-column-up {
+    to {
+        transform: translateY(-50%);
     }
 }
 
-.price-sticker {
-    transform: rotate(var(--sticker-rotate, 0deg));
+@keyframes hero-column-down {
+    from {
+        transform: translateY(-50%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.hero-columns {
+    /* Las columnas aparecen y desaparecen difuminadas arriba y abajo */
+    mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-    .price-sticker {
-        animation: sticker-in 360ms cubic-bezier(0.3, 1.4, 0.5, 1) both;
-        animation-delay: var(--sticker-delay, 0ms);
+    .hero-column {
+        animation: hero-column-up var(--duration, 45s) linear infinite;
+        will-change: transform;
+    }
+
+    .hero-column[data-direction="down"] {
+        animation-name: hero-column-down;
+    }
+
+    /* Se detiene al pasar el ratón, al navegar con teclado o con el botón de pausa */
+    .hero-columns:hover .hero-column,
+    .hero-columns:focus-within .hero-column,
+    .hero-columns[data-paused="true"] .hero-column {
+        animation-play-state: paused;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    /* Sin movimiento no hay nada que pausar */
+    .hero-columns-toggle {
+        display: none;
+    }
+}
+
+/* Aparición secuencial (FadeSequence / FadeWords): cada paso espera a --fade-index */
+@keyframes fade-sequence {
+    from {
+        opacity: 0;
+        transform: translateY(0.35em);
+        filter: blur(3px);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .fade-item {
+        animation: fade-sequence 650ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+        animation-delay: calc(var(--fade-delay, 0ms) + var(--fade-index, 0) * var(--fade-step, 80ms));
     }
 }
 

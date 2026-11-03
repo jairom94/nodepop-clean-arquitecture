@@ -1,19 +1,11 @@
-import type { CSSProperties } from "react";
 import { Link } from "react-router";
+import { FadeSequence, FadeWords } from "@/components/FadeSequence";
 import { useCatalog } from "@/presentation/catalog/hooks/useCatalog";
 import { CatalogGrid, CatalogGridSkeleton } from "@/presentation/catalog/components/CatalogGrid";
 import { CatalogSearch } from "@/presentation/catalog/components/CatalogSearch";
-import { PriceTag } from "@/presentation/components/PriceTag";
-import { ProductImage } from "@/presentation/components/ProductImage";
+import { HeroProductColumns } from "@/presentation/catalog/components/HeroProductColumns";
 
 const RECENT_COUNT = 4;
-
-/** Cada pegatina con su giro y su turno al pegarse (propiedades CSS propias). */
-const STICKERS = [
-  { "--sticker-rotate": "-4deg", "--sticker-delay": "250ms" },
-  { "--sticker-rotate": "3deg", "--sticker-delay": "400ms" },
-  { "--sticker-rotate": "-2deg", "--sticker-delay": "550ms" },
-] as unknown as CSSProperties[];
 
 const steps = [
   { title: "Sube una foto", description: "Una imagen clara de lo que vendes." },
@@ -26,41 +18,28 @@ const steps = [
 
 export default function HomePage() {
   const { data: products } = useCatalog();
-  const featured = products?.slice(0, 3) ?? [];
 
   return (
     <>
       <section className="border-b bg-card">
-        <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:py-18">
-          <div>
-            <h1 className="font-display text-6xl leading-[0.92] lg:text-[5.5rem] text-retro">
-              Lo que a otros les sobra, a ti te viene bien.
-            </h1>
+        <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:py-14">
+          {/* Entrada única al cargar: el titular palabra a palabra, luego el texto y el buscador */}
+          <FadeSequence step={55} delay={120}>
+            <FadeWords
+              as="h1"
+              text="Lo que a otros les sobra, a ti te viene bien."
+              className="font-display text-6xl leading-[0.92] lg:text-[5.5rem] text-retro"
+            />
             <p className="mt-5 max-w-lg text-lg text-muted-foreground">
               Compra y vende productos de segunda mano. Publicar un producto es subir una foto y
               ponerle precio.
             </p>
-            <CatalogSearch placeholder="¿Qué buscas?" large className="mt-7" />
-          </div>
+            <div className="mt-7">
+              <CatalogSearch placeholder="¿Qué buscas?" large />
+            </div>
+          </FadeSequence>
 
-          <div aria-hidden="true" className="grid min-h-80 grid-cols-2 gap-4">
-            {featured.map((product, index) => (
-              <div key={product.id} className={index === 0 ? "relative row-span-2" : "relative"}>
-                <ProductImage
-                  src={product.image}
-                  name=""
-                  tags={product.tags.map((tag) => tag.name)}
-                  seed={product.id}
-                  className="size-full min-h-36 rounded-2xl"
-                />
-                <PriceTag
-                  price={product.price}
-                  className="price-sticker absolute bottom-3 left-3 text-2xl"
-                  style={STICKERS[index]}
-                />
-              </div>
-            ))}
-          </div>
+          <HeroProductColumns products={products} className="h-[28rem] lg:h-[36rem]" />
         </div>
       </section>
 
