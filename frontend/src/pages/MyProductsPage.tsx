@@ -66,6 +66,12 @@ export default function MyProductsPage() {
     });
   }, [products, filters]);
 
+  const priceBounds = useMemo(() => {
+    if (!products?.length) return null;
+    const prices = products.map((product) => product.price);
+    return { min: Math.floor(Math.min(...prices)), max: Math.ceil(Math.max(...prices)) };
+  }, [products]);
+
   const totalPages = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
   const pageItems = filteredItems.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
@@ -124,7 +130,7 @@ export default function MyProductsPage() {
         </div>
       </div>
 
-      <ProductsFilter values={filters} onChange={handleFiltersChange} />
+      <ProductsFilter values={filters} onChange={handleFiltersChange} priceBounds={priceBounds} />
 
       {isPending && (
         <div aria-busy="true" aria-label="Cargando productos" className="mt-4 flex flex-col gap-3">

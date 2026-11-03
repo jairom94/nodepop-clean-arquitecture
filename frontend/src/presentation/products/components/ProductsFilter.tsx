@@ -1,6 +1,8 @@
 import { useTags } from "@/presentation/tags/hooks/useTags";
 import { TagChip } from "@/presentation/components/TagChip";
 import { Button } from "@/components/ui/button";
+import { RangeSlider } from "@/components/ui/range-slider";
+import { formatPrice } from "@/lib/format";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -18,12 +20,29 @@ export const EMPTY_PRODUCTS_FILTER: ProductsFilterValues = {
   tags: [],
 };
 
+export interface PriceBounds {
+  min: number;
+  max: number;
+}
+
 interface ProductsFilterProps {
   values: ProductsFilterValues;
   onChange: (values: ProductsFilterValues) => void;
+  /** Precio mínimo y máximo de los productos; sin él no se muestra el selector de precio. */
+  priceBounds: PriceBounds | null;
 }
 
-export function ProductsFilter({ values, onChange }: ProductsFilterProps) {
+function parseBound(value: string): number | null {
+  if (value.trim() === "") return null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+function clamp(value: number, { min, max }: PriceBounds): number {
+  return Math.min(Math.max(value, min), max);
+}
+
+export function ProductsFilter({ values, onChange, priceBounds }: ProductsFilterProps) {
   const tagsQuery = useTags();
 
   const set = (patch: Partial<ProductsFilterValues>) => onChange({ ...values, ...patch });
@@ -46,7 +65,7 @@ export function ProductsFilter({ values, onChange }: ProductsFilterProps) {
 
   return (
     <div className="mt-6 flex flex-col gap-3 rounded-2xl bg-card p-4">
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap items-end gap-x-6 gap-y-3">
         <div className="flex flex-[3_1_16rem] flex-col gap-1.5">
           <Label htmlFor="filter-name">Nombre</Label>
           <Input
@@ -57,30 +76,27 @@ export function ProductsFilter({ values, onChange }: ProductsFilterProps) {
             onChange={(e) => set({ name: e.target.value })}
           />
         </div>
-        <div className="flex flex-[1_1_8rem] flex-col gap-1.5">
-          <Label htmlFor="filter-price-min">Precio mínimo</Label>
-          <Input
-            id="filter-price-min"
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="0 €"
-            value={values.priceMin}
-            onChange={(e) => set({ priceMin: e.target.value })}
+        {priceBounds && priceBounds.max > priceBounds.min && (
+          <RangeSlider
+            label="Precio"
+            className="flex-[2_1_16rem]"
+            min={priceBounds.min}
+            max={priceBounds.max}
+            value={[
+              clamp(parseBound(values.priceMin) ?? priceBounds.min, priceBounds),
+              clamp(parseBound(values.priceMax) ?? priceBounds.max, priceBounds),
+            ]}
+            onValueChange={([low, high]) =>
+              // En los extremos el filtro queda vacío: "sin límite".
+              set({
+                priceMin: low <= priceBounds.min ? "" : String(low),
+                priceMax: high >= priceBounds.max ? "" : String(high),
+              })
+            }
+            formatValue={formatPrice}
+            thumbLabels={["Precio mínimo", "Precio máximo"]}
           />
-        </div>
-        <div className="flex flex-[1_1_8rem] flex-col gap-1.5">
-          <Label htmlFor="filter-price-max">Precio máximo</Label>
-          <Input
-            id="filter-price-max"
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="Sin límite"
-            value={values.priceMax}
-            onChange={(e) => set({ priceMax: e.target.value })}
-          />
-        </div>
+        )}
       </div>
 
       {(tags.length > 0 || isDirty) && (
