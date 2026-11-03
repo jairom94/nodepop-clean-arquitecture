@@ -44,7 +44,11 @@ export default function ProductDetailPage() {
           description="Puede que ya no exista o que haya fallado la conexión."
           action={
             productId === null ? (
-              <Link to="/my-products" className={buttonVariants({ variant: "outline" })}>
+              <Link
+                viewTransition
+                to="/my-products"
+                className={buttonVariants({ variant: "outline" })}
+              >
                 Volver a mis productos
               </Link>
             ) : (
@@ -62,7 +66,7 @@ export default function ProductDetailPage() {
     try {
       await deleteProduct.mutateAsync(productId);
       toast("Producto eliminado");
-      navigate("/my-products", { replace: true });
+      navigate("/my-products", { replace: true, viewTransition: true });
     } catch {
       setConfirmingDelete(false);
       toast.error("No se pudo eliminar el producto");

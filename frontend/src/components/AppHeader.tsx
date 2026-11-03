@@ -35,9 +35,10 @@ export function AppHeader() {
   const ThemeIcon = theme === "dark" ? Sun : Moon;
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-card">
+    <header className="sticky top-0 z-40 border-b bg-card [view-transition-name:site-header]">
       <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-x-2 gap-y-2 px-4 py-3 sm:gap-x-4 sm:px-6">
         <Link
+          viewTransition
           to="/"
           className="font-heading text-[1.625rem] font-extrabold tracking-tight text-primary"
         >
@@ -54,13 +55,17 @@ export function AppHeader() {
         <div className="ml-auto flex items-center gap-1">
           <nav aria-label="Principal" className="hidden items-center gap-1 md:flex">
             {items.map((item) => (
-              <NavLink key={item.to} to={item.to} className={linkClass}>
+              <NavLink viewTransition key={item.to} to={item.to} className={linkClass}>
                 {item.label}
               </NavLink>
             ))}
           </nav>
 
-          <Link to={SELL_PATH} className={buttonVariants({ className: "px-3.5 sm:mx-1 sm:px-5" })}>
+          <Link
+            viewTransition
+            to={SELL_PATH}
+            className={buttonVariants({ className: "px-3.5 sm:mx-1 sm:px-5" })}
+          >
             <Plus className="size-4" aria-hidden="true" />
             Vender
           </Link>
@@ -70,7 +75,12 @@ export function AppHeader() {
           </Button>
 
           {isAuthenticated && (
-            <Link to="/profile" aria-label="Mi perfil" className="hidden rounded-full md:block">
+            <Link
+              viewTransition
+              to="/profile"
+              aria-label="Mi perfil"
+              className="hidden rounded-full md:block"
+            >
               {user ? (
                 <UserAvatar name={user.name} lastname={user.lastname1} />
               ) : (
@@ -99,6 +109,7 @@ export function AppHeader() {
           <div className="flex flex-col gap-1 px-4 py-3">
             {items.map((item) => (
               <NavLink
+                viewTransition
                 key={item.to}
                 to={item.to}
                 className={linkClass}
@@ -108,7 +119,12 @@ export function AppHeader() {
               </NavLink>
             ))}
             {isAuthenticated && (
-              <NavLink to="/profile" className={linkClass} onClick={() => setIsOpen(false)}>
+              <NavLink
+                viewTransition
+                to="/profile"
+                className={linkClass}
+                onClick={() => setIsOpen(false)}
+              >
                 Mi perfil
               </NavLink>
             )}

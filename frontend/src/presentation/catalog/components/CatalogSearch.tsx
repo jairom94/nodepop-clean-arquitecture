@@ -36,7 +36,7 @@ export function CatalogSearch({ placeholder, large = false, className }: Catalog
       next.delete("q");
     }
     const search = next.toString();
-    navigate(search ? `/products?${search}` : "/products");
+    navigate(search ? `/products?${search}` : "/products", { viewTransition: true });
   };
 
   return (

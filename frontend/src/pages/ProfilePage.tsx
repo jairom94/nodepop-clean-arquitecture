@@ -17,7 +17,7 @@ export default function ProfilePage() {
     try {
       await logout.mutateAsync();
       clearSession();
-      navigate("/login", { replace: true });
+      navigate("/login", { replace: true, viewTransition: true });
     } catch {
       toast.error("No se pudo cerrar la sesión");
     }

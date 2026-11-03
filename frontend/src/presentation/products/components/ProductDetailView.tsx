@@ -34,6 +34,7 @@ export function ProductDetailView({
   return (
     <section>
       <Link
+        viewTransition
         to={backTo}
         className="inline-flex min-h-11 items-center gap-1.5 font-medium text-primary hover:underline"
       >
@@ -47,7 +48,7 @@ export function ProductDetailView({
           name={name}
           tags={tags}
           seed={id}
-          className="aspect-4/3 min-w-0 flex-[3_1_24rem] rounded-3xl"
+          className="aspect-4/3 min-w-0 flex-[3_1_24rem] rounded-3xl [view-transition-name:product-image]"
         />
 
         <div className="flex min-w-0 flex-[2_1_18rem] flex-col gap-5">
@@ -63,6 +64,7 @@ export function ProductDetailView({
               {tags.map((tag) => (
                 <li key={tag}>
                   <Link
+                    viewTransition
                     to={`/products?tag=${encodeURIComponent(tag)}`}
                     className="inline-flex h-9 items-center rounded-full border border-input bg-card px-3.5 text-sm font-medium hover:bg-muted"
                   >

@@ -34,7 +34,7 @@ export function Login() {
       const session = await login.mutateAsync(values);
       setSession(session);
       const from = (location.state as { from?: string } | null)?.from ?? "/";
-      navigate(from, { replace: true });
+      navigate(from, { replace: true, viewTransition: true });
     } catch (err) {
       const message =
         isAxiosError(err) && err.response?.status === 401
@@ -107,6 +107,7 @@ export function Login() {
         <p className="mt-4 text-center text-sm text-muted-foreground">
           ¿No tienes cuenta?{" "}
           <Link
+            viewTransition
             to="/register"
             className="font-semibold text-primary underline-offset-4 hover:underline"
           >

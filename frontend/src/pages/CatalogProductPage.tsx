@@ -47,7 +47,7 @@ export default function CatalogProductPage() {
           title="Este anuncio ya no está aquí"
           description="Puede que se haya retirado o que la dirección no sea correcta."
           action={
-            <Link to="/products" className={buttonVariants()}>
+            <Link viewTransition to="/products" className={buttonVariants()}>
               Ver productos
             </Link>
           }

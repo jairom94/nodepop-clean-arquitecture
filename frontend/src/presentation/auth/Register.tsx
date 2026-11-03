@@ -32,7 +32,7 @@ export function Register() {
     try {
       await register.mutateAsync(values);
       setIsSuccess(true);
-      setTimeout(() => navigate("/login", { replace: true }), 2000);
+      setTimeout(() => navigate("/login", { replace: true, viewTransition: true }), 2000);
     } catch (err) {
       const message =
         isAxiosError(err) && err.response?.status === 409
@@ -54,7 +54,10 @@ export function Register() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button className="w-full" onClick={() => navigate("/login", { replace: true })}>
+          <Button
+            className="w-full"
+            onClick={() => navigate("/login", { replace: true, viewTransition: true })}
+          >
             Ir al login
           </Button>
         </CardContent>
@@ -165,6 +168,7 @@ export function Register() {
         <p className="mt-4 text-center text-sm text-muted-foreground">
           ¿Ya tienes cuenta?{" "}
           <Link
+            viewTransition
             to="/login"
             className="font-semibold text-primary underline-offset-4 hover:underline"
           >

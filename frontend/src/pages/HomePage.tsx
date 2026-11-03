@@ -56,6 +56,7 @@ export default function HomePage() {
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
           <h2 className="font-heading text-3xl font-extrabold tracking-tight">Recién publicado</h2>
           <Link
+            viewTransition
             to="/products"
             className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline"
           >

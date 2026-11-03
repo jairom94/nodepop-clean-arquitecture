@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useViewTransitionState } from "react-router";
 import type { CatalogProduct } from "@/application/ports/CatalogGateway";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PriceTag } from "@/presentation/components/PriceTag";
@@ -9,16 +9,22 @@ const GRID_CLASS = "grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(14
 
 function CatalogCard({ product }: { product: CatalogProduct }) {
   const tags = product.tags.map((tag) => tag.name);
+  const detailPath = `/products/${product.id}`;
+  // Solo la tarjeta implicada en la transición lleva el nombre compartido.
+  const isTransitioning = useViewTransitionState(detailPath);
 
   return (
-    <Link to={`/products/${product.id}`} className="group block rounded-2xl">
+    <Link viewTransition to={detailPath} className="group block rounded-2xl">
       <div className="relative">
         <ProductImage
           src={product.image}
           name={product.name}
           tags={tags}
           seed={product.id}
-          className="aspect-4/3 w-full rounded-2xl transition-opacity group-hover:opacity-85"
+          className={cn(
+            "aspect-4/3 w-full rounded-2xl transition-opacity group-hover:opacity-85",
+            isTransitioning && "[view-transition-name:product-image]",
+          )}
         />
         <PriceTag price={product.price} className="absolute bottom-3 left-3" />
       </div>

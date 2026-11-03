@@ -1,8 +1,9 @@
-import { Link } from "react-router";
+import { Link, useViewTransitionState } from "react-router";
 import { Pencil, Trash2 } from "lucide-react";
 import type { ProductDto } from "@/application/products/schemas/ProductSchema";
 import { Button } from "@/components/ui/button";
 import { toThumbnailUrl } from "@/lib/image";
+import { cn } from "@/lib/utils";
 import { PriceTag } from "@/presentation/components/PriceTag";
 import { ProductImage } from "@/presentation/components/ProductImage";
 
@@ -14,6 +15,8 @@ interface ProductRowProps {
 
 export function ProductRow({ product, onEdit, onDelete }: ProductRowProps) {
   const tags = product.tags.map((tag) => tag.name);
+  const detailPath = `/my-products/${product.id}`;
+  const isTransitioning = useViewTransitionState(detailPath);
 
   return (
     <li className="flex flex-wrap items-center gap-x-4 gap-y-3 border-b px-4 py-3 last:border-b-0">
@@ -22,11 +25,14 @@ export function ProductRow({ product, onEdit, onDelete }: ProductRowProps) {
         name={product.name}
         tags={tags}
         seed={product.id ?? 0}
-        className="h-16.5 w-22 shrink-0 rounded-xl"
+        className={cn(
+          "h-16.5 w-22 shrink-0 rounded-xl",
+          isTransitioning && "[view-transition-name:product-image]",
+        )}
       />
       <div className="min-w-0 flex-[1_1_12rem]">
         <h2 className="truncate font-semibold">
-          <Link to={`/my-products/${product.id}`} className="hover:underline">
+          <Link viewTransition to={detailPath} className="hover:underline">
             {product.name}
           </Link>
         </h2>

@@ -16,10 +16,10 @@ export default function NotFoundPage() {
           Puede que se haya movido o que la dirección no sea correcta.
         </p>
         <div className="flex flex-wrap justify-center gap-2">
-          <Link to="/products" className={buttonVariants()}>
+          <Link viewTransition to="/products" className={buttonVariants()}>
             Ver productos
           </Link>
-          <Link to="/" className={buttonVariants({ variant: "outline" })}>
+          <Link viewTransition to="/" className={buttonVariants({ variant: "outline" })}>
             Volver al inicio
           </Link>
         </div>
