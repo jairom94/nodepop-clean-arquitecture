@@ -3,6 +3,7 @@ import { PrismaUserMapper } from "../infraestructura/PrismaUserMapper.js";
 import { UpdateUserCommand } from "./updateUserCommand.js";
 import { UserNotFoundError } from "./errors/UserNotFound.js";
 import { EmailAlreadyExistsError } from "../create/errors/EmailExists.js";
+import { ForbiddenError } from "../../../shared/errors/ForbiddenError.js";
 
 interface UserResponse {
   id: number|null;
@@ -19,6 +20,11 @@ export class UpdateUserHandler {
     async execute(command: UpdateUserCommand): Promise<UserResponse> {
         if (!Number.isInteger(command.id) || command.id <= 0) {
             throw new UserNotFoundError(command.id);
+        }
+
+        // Antes de consultar nada: no se revela si existen cuentas ajenas
+        if (command.id !== command.requesterId) {
+            throw new ForbiddenError("You can only update your own account");
         }
 
         const user = await this.userRepository.findById(command.id);
