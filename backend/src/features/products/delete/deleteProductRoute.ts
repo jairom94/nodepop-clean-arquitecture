@@ -33,6 +33,7 @@ import { Router } from "express";
 import { DeleteProductController } from "./deleteProductController.js";
 import { PrismaProductRepository } from "../infraestructura/PrismaProductRepository.js";
 import { DeleteProductHandler } from "./deleteProductHandler.js";
+import { DiskFileStorage } from "../infraestructura/DiskFileStorage.js";
 
 export function deleteProductRoute(
     router: Router,
@@ -44,7 +45,7 @@ export function deleteProductRoute(
 export function createDeleteProductRouter(): Router {
   const router = Router();
   const productRepository = new PrismaProductRepository();
-  const deleteProductHandler = new DeleteProductHandler(productRepository);
+  const deleteProductHandler = new DeleteProductHandler(productRepository, new DiskFileStorage());
   const deleteProductController = new DeleteProductController(deleteProductHandler);
   deleteProductRoute(router, deleteProductController);
   return router;

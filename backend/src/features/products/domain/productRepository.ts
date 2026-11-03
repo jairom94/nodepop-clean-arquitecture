@@ -2,7 +2,8 @@ import { Product } from "./Product.js";
 
 export interface IProductRepository {
      create(product:Product):Promise<Product>;
-     findAll():Promise<Product[]>;
+     findAll(skip?:number, take?:number):Promise<Product[]>;
+     count():Promise<number>;
      findById(id:number):Promise<Product|null>;
      findByOwnerId(ownerId:number, skip?:number, take?:number):Promise<Product[]>;
      countByOwnerId(ownerId:number):Promise<number>;

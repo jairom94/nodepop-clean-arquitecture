@@ -1,7 +1,12 @@
 import type { HttpClient } from "../ports/HttpClient";
-import { z } from "zod";
-import { ProductSchema, type ProductDto } from "./schemas/ProductSchema";
+import { ProductListResponseSchema, type ProductListResponseDto } from "./schemas/ProductSchema";
 
+export interface ListProductsParams {
+  page?: number;
+  pageSize?: number;
+}
+
+/** Listado paginado de todos los productos (GET /products). */
 export class ListProductsService {
   private readonly httpClient: HttpClient;
 
@@ -9,8 +14,11 @@ export class ListProductsService {
     this.httpClient = httpClient;
   }
 
-  async execute(): Promise<ProductDto[]> {
-    const response = await this.httpClient.get("/products");
-    return z.array(ProductSchema).parse(response);
+  async execute({
+    page = 1,
+    pageSize = 10,
+  }: ListProductsParams = {}): Promise<ProductListResponseDto> {
+    const response = await this.httpClient.get(`/products?page=${page}&pageSize=${pageSize}`);
+    return ProductListResponseSchema.parse(response);
   }
 }

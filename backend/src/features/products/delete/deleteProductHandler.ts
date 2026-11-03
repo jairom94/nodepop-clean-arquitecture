@@ -2,10 +2,12 @@ import { IProductRepository } from "../domain/productRepository.js";
 import { DeleteProductCommand } from "./deleteProductCommand.js";
 import { ProductNotFoundError } from "../update/errors/ProductNotFound.js";
 import { ForbiddenError } from "../../../shared/errors/ForbiddenError.js";
+import { IFileStorage } from "../domain/FileStorage.js";
 
 export class DeleteProductHandler {
     constructor(
-        private readonly productRepository: IProductRepository
+        private readonly productRepository: IProductRepository,
+        private readonly fileStorage: IFileStorage,
     ) {}
 
     async execute(command: DeleteProductCommand): Promise<void> {
@@ -23,5 +25,10 @@ export class DeleteProductHandler {
         }
 
         await this.productRepository.delete(command.id);
+
+        // Sin el producto, su imagen y su miniatura quedarían huérfanas en disco
+        if (product.image) {
+            await this.fileStorage.delete(product.image.replace(/^\/uploads\//, ""));
+        }
     }
 }

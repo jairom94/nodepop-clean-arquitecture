@@ -12,11 +12,17 @@ export class PrismaProductRepository implements IProductRepository {
         })        
         return PrismaProductMapper.toDomain(created);
     }
-    async findAll(): Promise<Product[]> {
+    async findAll(skip?: number, take?: number): Promise<Product[]> {
         const products = await databaseClient.db.product.findMany({
+            skip,
+            take,
+            orderBy:{ id: "desc" },
             include:{ tags:true }
         });
         return products.map(product=>PrismaProductMapper.toDomain(product));
+    }
+    async count(): Promise<number> {
+        return databaseClient.db.product.count();
     }
     async findById(id: number): Promise<Product | null> {
         const found = await databaseClient.db.product.findUnique({

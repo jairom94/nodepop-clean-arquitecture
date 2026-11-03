@@ -8,7 +8,8 @@ export const createProductSchema = z.object({
     price: z
     .coerce
     .number()
-    .positive({ message: "Price must be positive" }),
+    .positive({ message: "Price must be positive" })
+    .max(10_000_000, { message: "Price must be at most 10,000,000" }),
     tags: z
     .preprocess(
       (val) => {
@@ -18,7 +19,11 @@ export const createProductSchema = z.object({
         }
         return val;
       },
-      z.array(z.string().min(1, { message: "Tag must not be empty" })).optional(),
+      z.array(
+      z.string()
+        .min(1, { message: "Tag must not be empty" })
+        .max(50, { message: "Tag must be at most 50 characters" }),
+    ).max(10, { message: "A product can have at most 10 tags" }).optional(),
     )
     .optional(),
 });
