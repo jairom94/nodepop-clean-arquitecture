@@ -25,8 +25,10 @@ const router = Router();
 // Rutas publicas
 // Rate limit estricto en login para mitigar ataques de fuerza bruta
 router.use('/auth/login', rateLimitPresets.login(), createLoginRouter());
-router.use('/auth/refresh',createRefreshTokenRouter());
-router.use('/users',createUserRouter());
+router.use('/auth/refresh', rateLimitPresets.refresh(), createRefreshTokenRouter());
+// Solo el alta (POST) es pública; la edición de usuario pasa por el limitador global
+const registerLimiter = rateLimitPresets.register();
+router.use('/users', (req, res, next) => (req.method === "POST" ? registerLimiter(req, res, next) : next()), createUserRouter());
 
 // Rutas protegidas
 // Rate limit global para todas las rutas autenticadas

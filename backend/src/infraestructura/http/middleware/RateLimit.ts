@@ -47,6 +47,18 @@ export const rateLimitPresets = {
       max: 5, // 5 intentos por IP cada 15 min
       message: "Demasiados intentos de inicio de sesión. Inténtalo de nuevo más tarde.",
     }),
+  register: () =>
+    createRateLimiter({
+      windowMs: 60 * 60 * 1000, // 1 hora
+      max: 10, // 10 cuentas nuevas por IP cada hora
+      message: "Demasiados registros desde esta conexión. Inténtalo de nuevo más tarde.",
+    }),
+  refresh: () =>
+    createRateLimiter({
+      windowMs: 15 * 60 * 1000, // 15 minutos
+      max: 30, // renovaciones de sesión por IP cada 15 min
+      message: "Demasiadas renovaciones de sesión. Inténtalo de nuevo más tarde.",
+    }),
   global: () =>
     createRateLimiter({
       windowMs: 15 * 60 * 1000, // 15 minutos
