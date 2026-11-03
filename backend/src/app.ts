@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response, Router } from "express";
 import logger from "morgan";
 import cors from "cors";
+import helmet from "helmet";
 import path from "node:path";
 import { ErrorCodes } from "./shared/errors/error-codes.js";
 import { AppError } from "./shared/errors/AppError.js";
@@ -9,6 +10,10 @@ import { createSwaggerRouter } from "./infraestructura/http/swagger.js";
 import { ENVIRONMENTS } from "./config/environments.js";
 
 const app = express();
+
+// Cabeceras de seguridad. Las imágenes de /uploads se muestran desde el frontend,
+// que vive en otro origen: se permite cargarlas entre orígenes (por defecto Helmet lo bloquea).
+app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
 // CORS: permite peticiones desde el origen del frontend
 app.use(cors({
@@ -55,7 +60,7 @@ app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
     return res.status(err.status).json({
       code: err.code,
       message: err.message,
-      cause: err.cause,
+      cause: err.expose ? err.cause : undefined,
       stack: ENVIRONMENTS.mode === "development" ? err.stack : undefined,
     });
   }

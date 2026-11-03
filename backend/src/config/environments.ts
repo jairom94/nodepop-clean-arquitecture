@@ -32,6 +32,7 @@ export const ENVIRONMENTS = {
      jwtRefreshSecret,
      jwtExpiresIn: process.env.JWT_EXPIRES_IN || '1h',
      jwtRefreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
-     mode: process.env.MODE || 'development',
+     // Sin MODE explícito se asume producción: nunca se envían trazas por omisión
+     mode: process.env.MODE || 'production',
      corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173'
 } as const;
