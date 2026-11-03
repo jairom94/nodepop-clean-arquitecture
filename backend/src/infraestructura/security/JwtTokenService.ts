@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import jwt from "jsonwebtoken";
 import { ITokenService, TokenPayload, TokenType } from "../../features/auth/domain/TokenService.js";
 import { ENVIRONMENTS } from "../../config/environments.js";
@@ -19,7 +20,13 @@ export class JwtTokenService implements ITokenService {
     return jwt.sign(
       { ...payload, type },
       secretFor(type),
-      { algorithm: ALGORITHM, expiresIn: expiresIn as jwt.SignOptions["expiresIn"] },
+      {
+        algorithm: ALGORITHM,
+        expiresIn: expiresIn as jwt.SignOptions["expiresIn"],
+        // Identificador único (jti): sin él, dos sesiones abiertas en el mismo segundo
+        // tendrían el mismo token y revocar una revocaría también la otra.
+        jwtid: randomUUID(),
+      },
     );
   }
 
