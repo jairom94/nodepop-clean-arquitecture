@@ -4,7 +4,8 @@ import { ErrorCodes } from "./error-codes.js";
 
 export class ValidationError extends AppError {
   readonly code = ErrorCodes.VALIDATION_ERROR;
-  readonly status = 401;
+  // 400: un 401 hace creer al cliente que la sesión ha caducado
+  readonly status = 400;
 
   constructor(zodError: z.ZodError) {
     const err = (zodError.issues ?? []).map(issue => ({
