@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
+import { apiErrorMessage } from "@/lib/api-error";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { PageContainer } from "@/components/PageContainer";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -67,9 +68,9 @@ export default function ProductDetailPage() {
       await deleteProduct.mutateAsync(productId);
       toast("Producto eliminado");
       navigate("/my-products", { replace: true, viewTransition: true });
-    } catch {
+    } catch (error) {
       setConfirmingDelete(false);
-      toast.error("No se pudo eliminar el producto");
+      toast.error(apiErrorMessage(error, "No se pudo eliminar el producto"));
     }
   };
 

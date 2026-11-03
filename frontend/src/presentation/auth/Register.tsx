@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAxiosError } from "axios";
+import { apiErrorMessage } from "@/lib/api-error";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -34,10 +35,12 @@ export function Register() {
       setIsSuccess(true);
       setTimeout(() => navigate("/login", { replace: true, viewTransition: true }), 2000);
     } catch (err) {
-      const message =
+      const message = apiErrorMessage(
+        err,
         isAxiosError(err) && err.response?.status === 409
           ? "Este email ya está registrado"
-          : "Error al registrar. Inténtalo de nuevo";
+          : "Error al registrar. Inténtalo de nuevo",
+      );
       setError("root", { message });
     }
   };

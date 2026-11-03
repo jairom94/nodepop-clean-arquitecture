@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import { toast } from "sonner";
+import { apiErrorMessage } from "@/lib/api-error";
 import {
   EMPTY_PRODUCTS_FILTER,
   ProductsFilter,
@@ -97,8 +98,8 @@ export default function MyProductsPage() {
     try {
       await deleteProduct.mutateAsync(id);
       toast("Producto eliminado");
-    } catch {
-      toast.error("No se pudo eliminar el producto");
+    } catch (error) {
+      toast.error(apiErrorMessage(error, "No se pudo eliminar el producto"));
     } finally {
       setConfirmOpen(false);
     }

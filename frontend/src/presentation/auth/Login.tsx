@@ -13,6 +13,12 @@ import {
 import { useAuthActions } from "@/store/auth/auth-selectors";
 import { useLogin } from "./hooks/useLogin";
 
+/** Cuenta de la demo pública; sin variables de entorno no se muestra. */
+const DEMO_ACCOUNT =
+  import.meta.env.VITE_DEMO_EMAIL && import.meta.env.VITE_DEMO_PASSWORD
+    ? { email: import.meta.env.VITE_DEMO_EMAIL, password: import.meta.env.VITE_DEMO_PASSWORD }
+    : null;
+
 export function Login() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,6 +27,7 @@ export function Login() {
     control,
     handleSubmit,
     setError,
+    setValue,
     formState: { errors },
   } = useForm<LoginCredentials>({
     resolver: zodResolver(LoginCredentialsSchema),
@@ -42,6 +49,13 @@ export function Login() {
           : "Error al iniciar sesión. Inténtalo de nuevo";
       setError("root", { message });
     }
+  };
+
+  const enterWithDemo = () => {
+    if (!DEMO_ACCOUNT) return;
+    setValue("email", DEMO_ACCOUNT.email);
+    setValue("password", DEMO_ACCOUNT.password);
+    void handleSubmit(onSubmit)();
   };
 
   return (
@@ -104,6 +118,25 @@ export function Login() {
             {login.isPending ? "Entrando..." : "Entrar"}
           </Button>
         </form>
+        {DEMO_ACCOUNT && (
+          <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-dashed border-input bg-secondary/60 p-4 text-sm">
+            <div>
+              <p className="font-semibold">¿Solo quieres echar un vistazo?</p>
+              <p className="text-muted-foreground">
+                La demo es de solo lectura. Entra con {DEMO_ACCOUNT.email} y la contraseña{" "}
+                {DEMO_ACCOUNT.password}.
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={login.isPending}
+              onClick={enterWithDemo}
+            >
+              Entrar con la cuenta de demo
+            </Button>
+          </div>
+        )}
         <p className="mt-4 text-center text-sm text-muted-foreground">
           ¿No tienes cuenta?{" "}
           <Link

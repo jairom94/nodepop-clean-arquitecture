@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
-import { isAxiosError } from "axios";
+import { apiErrorMessage, hasErrorCode } from "@/lib/api-error";
 import { toast } from "sonner";
 import type { TagDto } from "@/application/tags/schemas/TagSchema";
 import { useTags } from "@/presentation/tags/hooks/useTags";
@@ -13,11 +13,11 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
-/** El backend responde 403 si el tag lo usan productos de otros usuarios. */
+/** El backend responde 403 FORBIDDEN si el tag lo usan productos de otros usuarios. */
 const SHARED_TAG_MESSAGE = "Este tag lo usan productos de otros usuarios y no se puede cambiar";
 
 function isSharedTagError(error: unknown): boolean {
-  return isAxiosError(error) && error.response?.status === 403;
+  return hasErrorCode(error, "FORBIDDEN");
 }
 
 interface TagsManagerDialogProps {
@@ -44,8 +44,8 @@ export function TagsManagerDialog({ onClose }: TagsManagerDialogProps) {
     try {
       await createTag.mutateAsync(name);
       setNewName("");
-    } catch {
-      toast.error("No se pudo crear el tag (¿nombre duplicado?)");
+    } catch (error) {
+      toast.error(apiErrorMessage(error, "No se pudo crear el tag (¿nombre duplicado?)"));
     }
   };
 
@@ -57,9 +57,12 @@ export function TagsManagerDialog({ onClose }: TagsManagerDialogProps) {
       setEditingId(null);
     } catch (error) {
       toast.error(
-        isSharedTagError(error)
-          ? SHARED_TAG_MESSAGE
-          : "No se pudo renombrar el tag (¿nombre duplicado?)",
+        apiErrorMessage(
+          error,
+          isSharedTagError(error)
+            ? SHARED_TAG_MESSAGE
+            : "No se pudo renombrar el tag (¿nombre duplicado?)",
+        ),
       );
     }
   };
@@ -68,7 +71,12 @@ export function TagsManagerDialog({ onClose }: TagsManagerDialogProps) {
     try {
       await deleteTag.mutateAsync(id);
     } catch (error) {
-      toast.error(isSharedTagError(error) ? SHARED_TAG_MESSAGE : "No se pudo eliminar el tag");
+      toast.error(
+        apiErrorMessage(
+          error,
+          isSharedTagError(error) ? SHARED_TAG_MESSAGE : "No se pudo eliminar el tag",
+        ),
+      );
     } finally {
       setConfirmOpen(false);
     }

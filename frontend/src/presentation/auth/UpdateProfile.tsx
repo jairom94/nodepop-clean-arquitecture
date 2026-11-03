@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAxiosError } from "axios";
+import { apiErrorMessage } from "@/lib/api-error";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -48,12 +49,14 @@ export function UpdateProfile() {
       setIsSuccess(true);
       setTimeout(() => setIsSuccess(false), 3000);
     } catch (err) {
-      const message =
+      const message = apiErrorMessage(
+        err,
         isAxiosError(err) && err.response?.status === 409
           ? "Este email ya está en uso por otro usuario"
           : isAxiosError(err) && err.response?.status === 401
             ? "No autorizado. Inicia sesión de nuevo"
-            : "Error al actualizar. Inténtalo de nuevo";
+            : "Error al actualizar. Inténtalo de nuevo",
+      );
       setError("root", { message });
     }
   };

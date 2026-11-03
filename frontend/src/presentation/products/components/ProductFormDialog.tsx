@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PriceInput } from "@/components/ui/price-input";
 import { resolveImageUrl } from "@/lib/image";
+import { apiErrorMessage } from "@/lib/api-error";
 import { useDialogLifecycle } from "@/presentation/components/useDialogLifecycle";
 
 const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
@@ -117,8 +118,10 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
     try {
       await onSubmit({ ...values, file: selectedFile, tags: selectedTags });
       dialog.close();
-    } catch {
-      setError("root", { message: "No se pudo guardar el producto. Inténtalo de nuevo" });
+    } catch (error) {
+      setError("root", {
+        message: apiErrorMessage(error, "No se pudo guardar el producto. Inténtalo de nuevo"),
+      });
     }
   };
 
