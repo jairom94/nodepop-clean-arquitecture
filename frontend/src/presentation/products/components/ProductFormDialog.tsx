@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent, type KeyboardEvent } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import type { ProductDto } from "@/application/products/schemas/ProductSchema";
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PriceInput } from "@/components/ui/price-input";
 import { resolveImageUrl } from "@/lib/image";
 import { useDialogLifecycle } from "@/presentation/components/useDialogLifecycle";
 
@@ -53,6 +54,7 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
 
   const {
     register,
+    control,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
@@ -60,7 +62,8 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
     resolver: zodResolver(productFormSchema),
     defaultValues: {
       name: product?.name ?? "",
-      price: product?.price ?? ("" as unknown as number),
+      // null = vacío; el esquema lo rechaza con "Introduce un precio válido"
+      price: product?.price ?? (null as unknown as number),
     },
   });
 
@@ -169,14 +172,21 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
             </div>
             <div className="flex flex-[1_1_7rem] flex-col gap-1.5">
               <Label htmlFor="price">Precio (€)</Label>
-              <Input
-                id="price"
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder="150"
-                aria-invalid={!!errors.price}
-                {...register("price", { valueAsNumber: true })}
+              <Controller
+                name="price"
+                control={control}
+                render={({ field }) => (
+                  <PriceInput
+                    id="price"
+                    name={field.name}
+                    ref={field.ref}
+                    value={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    placeholder="150"
+                    aria-invalid={!!errors.price}
+                  />
+                )}
               />
               {errors.price && <p className="text-sm text-destructive">{errors.price.message}</p>}
             </div>
