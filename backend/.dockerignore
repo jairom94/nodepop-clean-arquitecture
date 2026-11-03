@@ -1,0 +1,39 @@
+# --- Dependencias: se instalan dentro de la imagen ---
+node_modules
+.pnpm-store
+
+# --- Compilados y cobertura ---
+dist
+coverage
+tsconfig.tsbuildinfo
+
+# --- Datos locales: con docker compose llegan por el volumen montado ---
+*.sqlite
+*.sqlite-journal
+*.db
+uploads
+
+# --- Configuración y secretos ---
+.env
+.env.*
+*.log
+
+# --- Herramientas y editores ---
+.git
+.gitignore
+.agents
+.claude
+.windsurf
+.bru
+.vscode
+.idea
+session-*.md
+skills-lock.json
+
+# --- Docker ---
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# --- General ---
+.DS_Store
