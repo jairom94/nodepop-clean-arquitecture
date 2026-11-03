@@ -37,7 +37,9 @@ export default function MyProductsPage() {
   const [page, setPage] = useState(1);
   const [editing, setEditing] = useState<ProductDto | null>(null);
   const [creating, setCreating] = useState(false);
+  // El producto se conserva al cerrar para que el texto no cambie durante la animación.
   const [deleting, setDeleting] = useState<ProductDto | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [tagsOpen, setTagsOpen] = useState(false);
 
   const { data: products, isPending, isError, refetch } = useMyProductsAll();
@@ -98,7 +100,7 @@ export default function MyProductsPage() {
     } catch {
       toast.error("No se pudo eliminar el producto");
     } finally {
-      setDeleting(null);
+      setConfirmOpen(false);
     }
   };
 
@@ -178,7 +180,10 @@ export default function MyProductsPage() {
               key={product.id}
               product={product}
               onEdit={setEditing}
-              onDelete={setDeleting}
+              onDelete={(product) => {
+                setDeleting(product);
+                setConfirmOpen(true);
+              }}
             />
           ))}
         </ul>
@@ -215,17 +220,15 @@ export default function MyProductsPage() {
         />
       )}
 
-      {deleting && (
-        <ConfirmDialog
-          open
-          title="¿Eliminar este producto?"
-          description={`«${deleting.name}» dejará de estar publicado. No se puede deshacer.`}
-          confirmLabel="Eliminar"
-          pending={deleteProduct.isPending}
-          onConfirm={() => void handleDelete(deleting.id as number)}
-          onCancel={() => setDeleting(null)}
-        />
-      )}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="¿Eliminar este producto?"
+        description={`«${deleting?.name ?? ""}» dejará de estar publicado. No se puede deshacer.`}
+        confirmLabel="Eliminar"
+        pending={deleteProduct.isPending}
+        onConfirm={() => deleting && void handleDelete(deleting.id as number)}
+        onCancel={() => setConfirmOpen(false)}
+      />
 
       {tagsOpen && <TagsManagerDialog onClose={() => setTagsOpen(false)} />}
     </PageContainer>

@@ -64,7 +64,8 @@ function FooterLink({ item }: { item: FooterItem }) {
     );
   }
   return (
-    <Link viewTransition to={item.to} className={LINK_CLASS}>
+    // Publicar abre un modal: sin transición de página para que no quede bajo la cabecera.
+    <Link viewTransition={!item.to.includes("new=1")} to={item.to} className={LINK_CLASS}>
       {item.label}
     </Link>
   );
@@ -105,7 +106,6 @@ export function AppFooter() {
             ¿Tienes algo que ya no usas? Ponle precio y publícalo.
           </p>
           <Link
-            viewTransition
             to="/my-products?new=1"
             className="inline-flex h-12 items-center gap-2 rounded-full bg-price px-6 font-semibold text-price-foreground transition-opacity hover:opacity-90 focus-visible:ring-3 focus-visible:ring-brand-foreground/60 focus-visible:outline-none"
           >

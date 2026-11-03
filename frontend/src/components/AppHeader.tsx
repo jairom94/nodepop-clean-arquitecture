@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { CatalogSearch } from "@/presentation/catalog/components/CatalogSearch";
 import { UserAvatar } from "@/presentation/components/UserAvatar";
 
+// Abre el modal de publicar: sin View Transition para que la cabecera no quede encima.
 const SELL_PATH = "/my-products?new=1";
 
 export function AppHeader() {
@@ -62,11 +63,7 @@ export function AppHeader() {
             ))}
           </nav>
 
-          <Link
-            viewTransition
-            to={SELL_PATH}
-            className={buttonVariants({ className: "px-3.5 sm:mx-1 sm:px-5" })}
-          >
+          <Link to={SELL_PATH} className={buttonVariants({ className: "px-3.5 sm:mx-1 sm:px-5" })}>
             <Plus className="size-4" aria-hidden="true" />
             Publicar
           </Link>

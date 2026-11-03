@@ -7,6 +7,7 @@ import { useCreateTag } from "@/presentation/tags/hooks/useCreateTag";
 import { useUpdateTag } from "@/presentation/tags/hooks/useUpdateTag";
 import { useDeleteTag } from "@/presentation/tags/hooks/useDeleteTag";
 import { ConfirmDialog } from "@/presentation/components/ConfirmDialog";
+import { useDialogLifecycle } from "@/presentation/components/useDialogLifecycle";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,7 @@ interface TagsManagerDialogProps {
 }
 
 export function TagsManagerDialog({ onClose }: TagsManagerDialogProps) {
+  const dialog = useDialogLifecycle(onClose);
   const tagsQuery = useTags();
   const createTag = useCreateTag();
   const updateTag = useUpdateTag();
@@ -24,7 +26,9 @@ export function TagsManagerDialog({ onClose }: TagsManagerDialogProps) {
   const [newName, setNewName] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState("");
+  // El tag se conserva al cerrar para que el texto no cambie durante la animación.
   const [deleting, setDeleting] = useState<TagDto | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const handleCreate = async () => {
     const name = newName.trim();
@@ -54,12 +58,12 @@ export function TagsManagerDialog({ onClose }: TagsManagerDialogProps) {
     } catch {
       toast.error("No se pudo eliminar el tag");
     } finally {
-      setDeleting(null);
+      setConfirmOpen(false);
     }
   };
 
   return (
-    <Dialog open onOpenChange={(next) => !next && onClose()}>
+    <Dialog {...dialog.rootProps}>
       <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Gestionar tags</DialogTitle>
@@ -128,7 +132,10 @@ export function TagsManagerDialog({ onClose }: TagsManagerDialogProps) {
                     size="icon"
                     className="text-destructive"
                     aria-label={`Eliminar ${tag.name}`}
-                    onClick={() => setDeleting(tag)}
+                    onClick={() => {
+                      setDeleting(tag);
+                      setConfirmOpen(true);
+                    }}
                   >
                     <Trash2 />
                   </Button>
@@ -138,17 +145,15 @@ export function TagsManagerDialog({ onClose }: TagsManagerDialogProps) {
           ))}
         </ul>
 
-        {deleting && (
-          <ConfirmDialog
-            open
-            title="¿Eliminar este tag?"
-            description={`«${deleting.name}» se quitará de los productos que lo usan.`}
-            confirmLabel="Eliminar"
-            pending={deleteTag.isPending}
-            onConfirm={() => void handleDelete(deleting.id as number)}
-            onCancel={() => setDeleting(null)}
-          />
-        )}
+        <ConfirmDialog
+          open={confirmOpen}
+          title="¿Eliminar este tag?"
+          description={`«${deleting?.name ?? ""}» se quitará de los productos que lo usan.`}
+          confirmLabel="Eliminar"
+          pending={deleteTag.isPending}
+          onConfirm={() => deleting && void handleDelete(deleting.id as number)}
+          onCancel={() => setConfirmOpen(false)}
+        />
       </DialogContent>
     </Dialog>
   );

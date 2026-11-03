@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { resolveImageUrl } from "@/lib/image";
+import { useDialogLifecycle } from "@/presentation/components/useDialogLifecycle";
 
 const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -41,6 +42,7 @@ interface ProductFormDialogProps {
 }
 
 export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDialogProps) {
+  const dialog = useDialogLifecycle(onClose);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(resolveImageUrl(product?.image));
   const [fileError, setFileError] = useState<string | null>(null);
@@ -111,14 +113,14 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
     if (fileError) return;
     try {
       await onSubmit({ ...values, file: selectedFile, tags: selectedTags });
-      onClose();
+      dialog.close();
     } catch {
       setError("root", { message: "No se pudo guardar el producto. Inténtalo de nuevo" });
     }
   };
 
   return (
-    <Dialog open onOpenChange={(next) => !next && onClose()}>
+    <Dialog {...dialog.rootProps}>
       <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{product ? "Editar producto" : "Publicar producto"}</DialogTitle>
@@ -212,7 +214,7 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
           {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={dialog.close}>
               Cancelar
             </Button>
             <Button type="submit" disabled={isSubmitting}>
