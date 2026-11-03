@@ -11,7 +11,7 @@ export class LogoutController {
                 ? authorization.slice("Bearer ".length)
                 : req.body?.token;
             const refreshToken = req.body?.refreshToken;
-            await this.handler.execute({ token, refreshToken });
+            await this.handler.execute({ token, refreshToken, requesterId: req.user?.sub ?? "" });
             res.status(204).send();
         } catch (error) {
             next(error);

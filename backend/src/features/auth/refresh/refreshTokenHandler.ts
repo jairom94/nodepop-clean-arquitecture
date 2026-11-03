@@ -15,15 +15,13 @@ export class RefreshTokenHandler {
       throw new UnauthorizedError("Invalid refresh token");
     }
 
-    const revoked = await this.tokenRepository.isRevoked(command.refreshToken);
-    if (revoked) {
-      throw new UnauthorizedError("Refresh token has been revoked");
-    }
-
-    // Rotación: revocar el refresh token usado y emitir uno nuevo
+    // Rotación atómica: revocar el refresh token usado. Si ya estaba revocado
+    // (reutilización o dos renovaciones a la vez), solo la primera petición obtiene sesión.
     const expiresAt = this.tokenService.getExpiry(command.refreshToken);
-    if (expiresAt) {
-      await this.tokenRepository.revoke(command.refreshToken, expiresAt);
+    const firstUse = expiresAt !== null
+      && await this.tokenRepository.revoke(command.refreshToken, expiresAt);
+    if (!firstUse) {
+      throw new UnauthorizedError("Refresh token has been revoked");
     }
 
     const token = this.tokenService.sign(payload, "access");
