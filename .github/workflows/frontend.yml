@@ -1,0 +1,79 @@
+name: Frontend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend.yml"
+  workflow_dispatch:
+
+# Un despliegue a la vez; uno nuevo cancela al que siga en curso
+concurrency:
+  group: frontend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Lint y build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.32.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+
+      - run: pnpm build
+        env:
+          # Variables del repositorio (Settings → Secrets and variables → Actions → Variables)
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_APP_NAME: Nodepop
+          VITE_DEMO_EMAIL: ${{ vars.VITE_DEMO_EMAIL }}
+          VITE_DEMO_PASSWORD: ${{ vars.VITE_DEMO_PASSWORD }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+          retention-days: 7
+
+  deploy:
+    name: Publicar en el servidor
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist
+
+      # Fijada a un commit concreto (v1.0.0): la action recibe la clave SSH del servidor
+      - name: Copiar el build a /var/www/nodepop/html
+        uses: appleboy/scp-action@ff85246acaad7bdce478db94a363cd2bf7c90345 # v1.0.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          # Huella SHA256 del servidor: sin ella aceptaría cualquier máquina en esa IP
+          fingerprint: ${{ secrets.DEPLOY_FINGERPRINT }}
+          source: "dist/*"
+          # Subcarpeta de /var/www/nodepop (de jairo): rm la borra y la recrea sin
+          # necesitar permisos sobre /var/www, que es de root
+          target: /var/www/nodepop/html
+          # Sube el contenido de dist/, no la carpeta
+          strip_components: 1
+          # Borra html/ antes de subir: sin esto se acumularían los assets de builds anteriores
+          rm: true
