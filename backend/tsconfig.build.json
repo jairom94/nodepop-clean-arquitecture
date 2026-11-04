@@ -1,0 +1,6 @@
+{
+  // Compilación de producción (Dockerfile): solo el código del servidor.
+  // rootDir "." (heredado) deja la salida en dist/src/, que es lo que arranca docker/start.sh.
+  "extends": "./tsconfig.json",
+  "include": ["src/**/*"]
+}
