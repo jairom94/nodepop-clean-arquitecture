@@ -1,0 +1,27 @@
+# Backend en PRODUCCIÓN (el de desarrollo es backend/docker-compose.yml).
+# El workflow copia este archivo a /home/jairo/nodepop/compose.yml en el servidor,
+# junto a backend.env, que solo existe allí (secretos JWT y configuración).
+name: nodepop
+
+services:
+  backend:
+    image: ghcr.io/jairom94/nodepop-backend:latest
+    container_name: nodepop-backend
+    restart: unless-stopped
+    env_file: backend.env
+    # Solo en localhost: nginx pasa /api/ y /uploads/ a este puerto, que no queda abierto a internet
+    ports:
+      - "127.0.0.1:3005:3005"
+    volumes:
+      - data:/app/data # base de datos SQLite
+      - uploads:/app/uploads # imágenes subidas
+    # Rota los logs para que no llenen el disco
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  data:
+  uploads:
