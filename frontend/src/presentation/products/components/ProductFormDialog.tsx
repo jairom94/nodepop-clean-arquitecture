@@ -1,6 +1,7 @@
 import { useState, type ChangeEvent, type KeyboardEvent } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { z } from "zod";
 import type { ProductDto } from "@/application/products/schemas/ProductSchema";
 import { useTags } from "@/presentation/tags/hooks/useTags";
@@ -57,7 +58,6 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
     register,
     control,
     handleSubmit,
-    setError,
     formState: { errors, isSubmitting },
   } = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
@@ -119,9 +119,8 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
       await onSubmit({ ...values, file: selectedFile, tags: selectedTags });
       dialog.close();
     } catch (error) {
-      setError("root", {
-        message: apiErrorMessage(error, "No se pudo guardar el producto. Inténtalo de nuevo"),
-      });
+      // El modal sigue abierto para no perder lo escrito; el aviso va por toast, como al borrar
+      toast.error(apiErrorMessage(error, "No se pudo guardar el producto. Inténtalo de nuevo"));
     }
   };
 
@@ -223,8 +222,6 @@ export function ProductFormDialog({ product, onClose, onSubmit }: ProductFormDia
               onKeyDown={handleNewTagKeyDown}
             />
           </fieldset>
-
-          {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={dialog.close}>
