@@ -3,7 +3,6 @@
 # Dependencias (pnpm)
 node_modules/
 .pnpm-store/
-pnpm-lock.yaml
 
 # Archivos compilados
 dist/
@@ -61,9 +60,6 @@ temp/
 # Configuración de TypeScript
 tsconfig.tsbuildinfo
 
-# Docker
-.dockerignore
-
 # Otros
 *.tgz
 *.tar.gz
@@ -83,6 +79,3 @@ session-ses_01c2.md
 
 # Api client
 .bru/
-
-# Archivos iniciales
-init_data/

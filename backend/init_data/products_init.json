@@ -1,0 +1,268 @@
+[
+    {
+        "name": "Laptop Pro",
+        "price": 1500,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Smartphone X",
+        "price": 800,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Tablet S",
+        "price": 600,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Monitor HD",
+        "price": 350,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Smartwatch Z",
+        "price": 250,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Auriculares Pro",
+        "price": 150,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Teclado Mecánico",
+        "price": 120,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Cámara Digital",
+        "price": 900,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Drone Explorer",
+        "price": 1100,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Bicicleta Eléctrica",
+        "price": 1800,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Drone 4K",
+        "price": 759,
+        "owner": "2",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Wireless Headphones",
+        "price": 123,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Smart Watch Pro",
+        "price": 349,
+        "owner": "2",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Electric Scooter",
+        "price": 234,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "DSLR Camera",
+        "price": 345,
+        "owner": "2",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Gaming Console",
+        "price": 234,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "VR Headset",
+        "price": 123,
+        "owner": "2",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Robot Vacuum",
+        "price": 231,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Portable Projector",
+        "price": 321,
+        "owner": "2",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Electric Grill",
+        "price": 234,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Fitness Tracker",
+        "price": 129,
+        "owner": "2",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Car GPS",
+        "price": 159,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Bluetooth Speaker",
+        "price": 89,
+        "owner": "2",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Electric Skateboard",
+        "price": 72,
+        "owner": "2",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Dash Cam",
+        "price": 149,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "3D Printer",
+        "price": 450,
+        "owner": "2",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Camping Tent",
+        "price": 220,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Noise-Canceling Earbuds",
+        "price": 179,
+        "owner": "2",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Electric Kettle",
+        "price": 45,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Action Camera",
+        "price": 299,
+        "owner": "2",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Mechanical Keyboard",
+        "price": 120,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Car Jump Starter",
+        "price": 135,
+        "owner": "2",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Wireless Charger",
+        "price": 35,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Laser Printer",
+        "price": 230,
+        "owner": "2",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Electric Bike",
+        "price": 1500,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Smart Mirror",
+        "price": 600,
+        "owner": "2",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Air Purifier",
+        "price": 200,
+        "owner": "1",
+        "image": "",
+        "tags": []
+    },
+    {
+        "name": "Satellite Phone",
+        "price": 239,
+        "owner": "2",
+        "image": "",
+        "tags": []
+    }
+]
