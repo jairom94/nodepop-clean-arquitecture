@@ -13,6 +13,10 @@ const isDevelopment = ENVIRONMENTS.mode === "development";
 
 const app = express();
 
+// En producción nginx va delante: se confía en un proxy para tomar la IP real del
+// cliente de X-Forwarded-For (sin esto, el rate limit vería a todos como 127.0.0.1).
+app.set("trust proxy", 1);
+
 // Cabeceras de seguridad. Las imágenes de /uploads se muestran desde el frontend,
 // que vive en otro origen: se permite cargarlas entre orígenes (por defecto Helmet lo bloquea).
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
