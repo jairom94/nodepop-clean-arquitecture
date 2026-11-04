@@ -31,6 +31,8 @@
     "morgan": "^1.12.1",
     "prettier": "^3.9.10",
     "prisma": "^7.10.1",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
     "typescript-eslint": "^8.72.1"
@@ -48,8 +50,6 @@
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.5.0",
     "sharp": "^0.35.5",
-    "swagger-jsdoc": "^6.3.0",
-    "swagger-ui-express": "^5.0.1",
     "zod": "^4.6.7"
   }
 }

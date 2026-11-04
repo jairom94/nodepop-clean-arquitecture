@@ -1,13 +1,15 @@
 import express, { NextFunction, Request, Response, Router } from "express";
-import logger from "morgan";
 import cors from "cors";
 import helmet from "helmet";
 import path from "node:path";
 import { ErrorCodes } from "./shared/errors/error-codes.js";
 import { AppError } from "./shared/errors/AppError.js";
 import apiRouter from "./infraestructura/http/router.js";
-import { createSwaggerRouter } from "./infraestructura/http/swagger.js";
 import { ENVIRONMENTS } from "./config/environments.js";
+
+// morgan y swagger son herramientas de desarrollo (devDependencies): se importan
+// solo en ese modo, porque la imagen de producción no los instala.
+const isDevelopment = ENVIRONMENTS.mode === "development";
 
 const app = express();
 
@@ -26,7 +28,11 @@ app.use(express.json());
 // Para form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-app.use(logger("dev"));
+// Log de peticiones en consola: solo en desarrollo
+if (isDevelopment) {
+  const { default: logger } = await import("morgan");
+  app.use(logger("dev"));
+}
 
 // Archivos estáticos: imágenes subidas de productos
 app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads")));
@@ -45,7 +51,8 @@ app.get('/health', (req, res) => {
 app.use(apiVersion,apiRouter);
 
 // Documentación de la API: solo en desarrollo, en producción no se expone el mapa de la API
-if (ENVIRONMENTS.mode === "development") {
+if (isDevelopment) {
+  const { createSwaggerRouter } = await import("./infraestructura/http/swagger.js");
   app.use('/api-doc', createSwaggerRouter());
 }
 
