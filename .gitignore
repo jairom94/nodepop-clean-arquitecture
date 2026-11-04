@@ -17,7 +17,5 @@ frontend/coverage/
 .DS_Store
 .env
 
-backend/prisma/migrations/
-
 docker-compose.override.yml
 *.dockerfile

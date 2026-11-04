@@ -9,6 +9,7 @@ dist/
 build/
 lib/
 *.js
+!eslint.config.js
 *.js.map
 *.d.ts
 !src/types/**/*.d.ts
